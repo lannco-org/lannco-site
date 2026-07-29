@@ -1,16 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
+import Arrow from '../components/Arrow.astro';
+import Seal from '../components/Seal.astro';
+import Placeholder from '../components/Placeholder.astro';
+
+// Heading uses Board C's "Relationships Begin with Conversations" (COPY.md v2).
+// Still a mailto, not a form — Phase 6 wires Resend/Formspree, which needs the
+// real contact address confirmed first (COPY.md open question 5).
 ---
-<Base title="Contact — LANNCO">
+<Base
+  title="Contact — LANNCO"
+  description="We work through referrals and selected introductions."
+>
   <section class="section">
-    <div class="container page-stub">
-      <h1 class="display" data-anim="split-lines">Let&rsquo;s Begin a Conversation</h1>
-      <hr class="rule" data-anim="fade" />
-      <p class="section-intro" data-anim="rise">We work through referrals and selected introductions.</p>
-      <a class="cta" href="mailto:hello@lannco.com" data-anim="rise">
-        Request a Conversation <span class="cta-arrow">&#10230;</span>
-      </a>
-      <!-- Phase 4: form wired to Resend/Formspree -->
+    <div class="container lead">
+      <div class="lead-copy">
+        <h1 class="display" data-anim="split-lines">Relationships Begin<br />with Conversations.</h1>
+        <hr class="rule" data-anim="fade" />
+        <p data-anim="rise">We work through referrals and selected introductions.</p>
+        <a class="cta" href="mailto:hello@lannco.com" data-anim="rise">
+          Start a Conversation <Arrow class="cta-arrow" />
+        </a>
+      </div>
+      <div class="lead-visual">
+        <Placeholder
+          asset="#4 dark cave/stone interior opening onto red maple"
+          variant="dark"
+          ratio="4 / 3"
+        />
+        <Seal class="visual-seal" />
+      </div>
     </div>
   </section>
 </Base>

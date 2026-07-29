@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import Kanji from '../components/Kanji.astro';
 import Seal from '../components/Seal.astro';
 import Arrow from '../components/Arrow.astro';
+import WorldMap from '../components/WorldMap.astro';
+import { stats, locations } from '../data/site';
 
 const capabilities = [
   {
@@ -89,6 +91,37 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
           </a>
         ))}
       </div>
+    </div>
+  </section>
+
+  {/* Condensed Global Presence — Board C's mobile home scrolls hero →
+      capabilities → global presence. The full treatment is /global-presence/. */}
+  <section class="section">
+    <div class="container lead">
+      <div class="lead-copy">
+        <h2 class="display" data-anim="split-lines">Global Presence</h2>
+        <hr class="rule" data-anim="fade" />
+        <p data-anim="rise">
+          A global network built on trust, relationships, and cultural intelligence.
+        </p>
+        <ul class="location-list" data-anim-stagger>
+          {locations.slice(0, 4).map((place) => <li>{place}</li>)}
+        </ul>
+        <a class="cta" href="/global-presence/" data-anim="rise">
+          View Our Network <Arrow class="cta-arrow" />
+        </a>
+      </div>
+      <div class="lead-visual">
+        <WorldMap />
+      </div>
+    </div>
+    <div class="container stat-row stat-row-compact" data-anim-stagger>
+      {stats.slice(0, 2).map(({ value, label }) => (
+        <div class="stat">
+          <span class="stat-value display">{value}</span>
+          <span class="stat-label label">{label}</span>
+        </div>
+      ))}
     </div>
   </section>
 </Base>

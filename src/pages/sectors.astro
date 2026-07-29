@@ -1,13 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { sectors } from '../data/site';
+
+// Board C's 2x4 grid, not Board B's single row of 8 (docs/HANDOFF.md).
 ---
-<Base title="Sectors — LANNCO">
+<Base
+  title="Sectors — LANNCO"
+  description="Deep expertise across industries and asset classes."
+>
   <section class="section">
-    <div class="container page-stub">
-      <h1 class="display" data-anim="split-lines">Sectors We Serve</h1>
-      <hr class="rule" data-anim="fade" />
-      <p class="section-intro" data-anim="rise">Deep expertise across industries and asset classes.</p>
-      <!-- Phase 2: 8-object grid + "Selected. Discreet. Impactful." per docs/COPY.md -->
+    <div class="container">
+      <SectionHead
+        heading="Sectors We Serve"
+        level="h1"
+        intro="Deep expertise across industries and asset classes."
+        ctaLabel="Explore Sectors"
+        ctaHref="/contact/"
+      />
+      <ul class="sector-grid" data-anim-stagger>
+        {sectors.map(({ label, asset }) => (
+          <li class="sector-tile">
+            <Placeholder asset={asset} variant="ivory" ratio="1 / 1" />
+            <span class="sector-label">{label}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="sector-tagline display" data-anim="rise">
+        Selected. Discreet. <span class="accent">Impactful.</span>
+      </p>
     </div>
   </section>
 </Base>

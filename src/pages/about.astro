@@ -1,16 +1,56 @@
 ---
 import Base from '../layouts/Base.astro';
+import Arrow from '../components/Arrow.astro';
+import Kanji from '../components/Kanji.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { timeline } from '../data/site';
+
+// Board B carries the timeline; Board C drops it for a second body paragraph.
+// Built with both — the timeline is the more substantial treatment and its copy
+// exists (docs/HANDOFF.md).
 ---
-<Base title="About — LANNCO">
-  <section class="section">
-    <div class="container page-stub">
-      <h1 class="display" data-anim="split-lines">About LANNCO</h1>
-      <hr class="rule" data-anim="fade" />
-      <p class="section-intro" data-anim="rise">
-        We are an independent cross-border advisory and strategic introductions platform,
-        connecting capital, markets, and people across Asia, the Middle East, Europe and Africa.
-      </p>
-      <!-- Phase 2: full layout w/ timeline (2004–2024) per docs/COPY.md -->
+<Base
+  title="About — LANNCO"
+  description="An independent cross-border advisory and strategic introductions platform."
+>
+  <section class="section about">
+    <span class="about-kanji" aria-hidden="true"><Kanji /></span>
+    <div class="container lead">
+      <div class="lead-copy">
+        <h1 class="display" data-anim="split-lines">About LANNCO</h1>
+        <hr class="rule" data-anim="fade" />
+        <p data-anim="rise">
+          We are an independent cross-border advisory and strategic introductions platform,
+          connecting capital, markets, and people across Asia, the Middle East, Europe and Africa.
+          We operate with discretion, integrity, and a deep understanding of cultures, markets,
+          and relationships.
+        </p>
+        <p data-anim="rise">
+          Our strength lies in connecting perspectives across borders — creating access where
+          trust and understanding meet.
+        </p>
+        <a class="cta" href="/contact/" data-anim="rise">
+          Our Story <Arrow class="cta-arrow" />
+        </a>
+      </div>
+      <div class="lead-visual">
+        <ol class="timeline" data-anim-stagger>
+          {timeline.map(({ year, place, note }) => (
+            <li>
+              <span class="timeline-year label">{year}</span>
+              <span class="timeline-place">{place}</span>
+              <span class="timeline-note">{note}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+    <div class="container about-image">
+      <Placeholder
+        asset="#2 bonsai/red-maple tree on rock in still water"
+        variant="mist"
+        ratio="16 / 7"
+      />
     </div>
   </section>
 </Base>

@@ -1,0 +1,35 @@
+---
+/**
+ * Stand-in for imagery that has not been generated yet (docs/ASSETS.md).
+ *
+ * Every instance names the ASSETS.md entry it is holding a slot for, so Phase 5
+ * is a find-and-replace rather than an archaeology exercise. The `asset` string
+ * is emitted as a data attribute — `document.querySelectorAll('[data-asset]')`
+ * lists everything still outstanding.
+ */
+interface Props {
+  /** ASSETS.md reference, e.g. "#6 rough grey stone monolith on ivory". */
+  asset: string;
+  variant?: 'stone' | 'silk' | 'ink' | 'marble' | 'mist' | 'dark' | 'ivory';
+  class?: string;
+  ratio?: string;
+  parallax?: string;
+}
+const {
+  asset,
+  variant = 'mist',
+  class: className,
+  ratio,
+  parallax,
+} = Astro.props;
+---
+<div
+  class:list={['ph', className]}
+  data-variant={variant}
+  data-asset={asset}
+  data-parallax={parallax}
+  style={ratio ? `aspect-ratio: ${ratio};` : undefined}
+  role="img"
+  aria-label={`Placeholder for ${asset}`}
+>
+</div>

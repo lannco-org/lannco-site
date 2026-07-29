@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import Arrow from '../components/Arrow.astro';
+import WorldMap from '../components/WorldMap.astro';
+import { stats, locations } from '../data/site';
+
+// Standalone page: both boards number Global Presence as its own panel. The home
+// page carries a condensed version of the same section (docs/HANDOFF.md).
+// Heading uses Board C's "A Global Network Built on Trust" (COPY.md v2).
+---
+<Base
+  title="Global Presence — LANNCO"
+  description="A global network built on trust, relationships, and cultural intelligence."
+>
+  <section class="section">
+    <div class="container lead">
+      <div class="lead-copy">
+        <h1 class="display" data-anim="split-lines">A Global Network<br />Built on Trust</h1>
+        <hr class="rule" data-anim="fade" />
+        <p data-anim="rise">
+          A global network built on trust, relationships, and cultural intelligence.
+        </p>
+        <ul class="location-list" data-anim-stagger>
+          {locations.map((place) => <li>{place}</li>)}
+        </ul>
+        <a class="cta" href="/contact/" data-anim="rise">
+          View Our Network <Arrow class="cta-arrow" />
+        </a>
+      </div>
+      <div class="lead-visual">
+        <WorldMap />
+      </div>
+    </div>
+
+    <div class="container stat-row" data-anim-stagger>
+      {stats.map(({ value, label }) => (
+        <div class="stat">
+          <span class="stat-value display">{value}</span>
+          <span class="stat-label label">{label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

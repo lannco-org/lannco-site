@@ -54,8 +54,8 @@ Copy is in COPY.md — not repeated here. These notes cover structure only.
 
 ## Next work, in order
 
-1. **Phase 2 — full page layouts** (biggest chunk): replace the six `page-stub` pages with real layouts per the notes above; add Global Presence and Our Process **as standalone pages** (both boards number them as their own panels) plus a **condensed Global Presence section on home** (Board C's mobile home scrolls hero → capabilities → global presence; Our Process does not appear on home); add a 404. Reuse existing section primitives.
-2. **Phase 3 — content:** Journal → Astro content collections, article template, 5 seeded articles.
+1. ✅ **Phase 2 — full page layouts** done 2026-07-29. Structure worth knowing: page copy/data lives in `src/data/capabilities.ts` and `src/data/site.ts` (single source, so the capability sub-nav cannot drift from the cards); shared shapes are `SectionHead.astro`, `Placeholder.astro` and the `.lead` grid CSS (copy left / visual right — About, capability detail, Global Presence, Contact, Private Circle all use it). Capability detail is one dynamic route, `capabilities/[slug].astro`.
+2. **Phase 3 — content:** Journal → Astro content collections, article template, 5 seeded articles. Also owns the "All Articles" list view (Board C mobile) and making journal cards link anywhere — they are inert today.
 3. **Phase 4 — remaining animations:** preloader (seal stamp), stat count-ups, map dot pulses + SVG arc draws (`stroke-dashoffset`), process line draw, mobile menu, page transitions (Astro view transitions).
 4. **Phases 5–8:** assets in → QA → Vercel launch → handover. Per PLAN.md.
 

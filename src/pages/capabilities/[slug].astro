@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import Arrow from '../../components/Arrow.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { capabilities } from '../../data/capabilities';
+
+export function getStaticPaths() {
+  return capabilities.map((capability) => ({
+    params: { slug: capability.slug },
+    props: { capability },
+  }));
+}
+
+const { capability } = Astro.props;
+const { num, title, sub, texture, asset, pillars, pillarsPending } = capability;
+---
+<Base title={`${title} — LANNCO`} description={sub}>
+  {/* Sub-nav replaces the primary nav links in the header row on the boards.
+      Rendered in-page here rather than in Nav.astro so it stays scoped to this
+      template — revisit if other page groups grow a sub-nav. */}
+  <nav class="subnav" aria-label="Capabilities">
+    <div class="container subnav-inner">
+      {capabilities.map((item) => (
+        <a
+          href={`/capabilities/${item.slug}/`}
+          aria-current={item.slug === capability.slug ? 'page' : undefined}
+        >
+          <span class="subnav-num">{item.num}.</span> {item.title}
+        </a>
+      ))}
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container lead">
+      <div class="lead-copy">
+        <h1 class="display" data-anim="split-lines">{title}</h1>
+        <hr class="rule" data-anim="fade" />
+        <p data-anim="rise">{sub}</p>
+        <a class="cta" href="/contact/" data-anim="rise">
+          Contact Us <Arrow class="cta-arrow" />
+        </a>
+      </div>
+      <div class="lead-visual">
+        <Placeholder asset={asset} variant={texture} ratio="4 / 3" />
+      </div>
+    </div>
+
+    {pillarsPending ? (
+      <div class="container">
+        {/* Client has only supplied pillar copy for Strategic Advisory
+            (docs/COPY.md open question 1). Deliberately rendering nothing rather
+            than inventing three pillars. */}
+        <p class="pillars-pending" data-anim="rise">
+          Detail for {title} is being finalised.
+        </p>
+      </div>
+    ) : (
+      <div class="container pillars" data-anim-stagger>
+        {pillars.map(({ num: pnum, title: ptitle, blurb }) => (
+          <div class="pillar">
+            <span class="pillar-num label">{pnum}</span>
+            <h2>{ptitle}</h2>
+            <p>{blurb}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+</Base>

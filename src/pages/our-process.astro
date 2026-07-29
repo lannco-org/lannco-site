@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import ProcessIcon from '../components/ProcessIcon.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { processSteps } from '../data/site';
+
+// The hairline connecting the five steps is a CSS pseudo-element for now; Phase 4
+// draws it on scroll (data-anim="line-draw" hook is on the .process container).
+---
+<Base
+  title="Our Process — LANNCO"
+  description="A disciplined process designed to uncover opportunities, create value, and build lasting relationships."
+>
+  <section class="section">
+    <div class="container">
+      <div class="process-head">
+        <h1 class="display" data-anim="split-lines">Our Process</h1>
+        <hr class="rule" data-anim="fade" />
+        <p class="section-intro" data-anim="rise">
+          A disciplined process designed to uncover opportunities, create value, and build
+          lasting relationships.
+        </p>
+      </div>
+
+      <ol class="process" data-anim-stagger data-anim="line-draw">
+        {processSteps.map(({ num, title, blurb, icon }) => (
+          <li class="process-step">
+            <ProcessIcon name={icon} />
+            <span class="process-num label">{num}</span>
+            <h2>{title}</h2>
+            <p>{blurb}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="container process-image">
+      <Placeholder
+        asset="#3 stepping stones through misty water"
+        variant="mist"
+        ratio="16 / 6"
+      />
+    </div>
+  </section>
+</Base>

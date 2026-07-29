@@ -8,6 +8,12 @@ const links = [
   { href: '/journal/', label: 'Journal' },
   { href: '/contact/', label: 'Contact' },
 ];
+// Not in the primary nav on the boards, but they are real pages — they live in
+// the hamburger panel and the footer index.
+const extraLinks = [
+  { href: '/global-presence/', label: 'Global Presence' },
+  { href: '/our-process/', label: 'Our Process' },
+];
 const { pathname } = Astro.url;
 ---
 <div class="announce" data-announce>
@@ -44,7 +50,7 @@ const { pathname } = Astro.url;
 {/* Starts inert so it is out of the tab order before nav.ts runs. */}
 <div class="nav-panel" id="nav-panel" data-nav-panel inert>
   <nav class="nav-panel-inner container" aria-label="All pages">
-    {[...links, { href: '/private-circle/', label: 'Private Circle' }].map(({ href, label }) => (
+    {[...links, ...extraLinks, { href: '/private-circle/', label: 'Private Circle' }].map(({ href, label }) => (
       <a href={href} aria-current={pathname === href ? 'page' : undefined}>{label}</a>
     ))}
   </nav>

@@ -1,0 +1,44 @@
+---
+/**
+ * The two-column section header used across the site: display heading + red
+ * rule on the left, intro copy + optional CTA on the right.
+ */
+import Arrow from './Arrow.astro';
+
+interface Props {
+  heading: string;
+  /** Rendered as an H1 on page-lead sections, H2 inside a page. */
+  level?: 'h1' | 'h2';
+  intro?: string;
+  /** Optional second intro paragraph (capabilities overview uses two). */
+  introSecondary?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+const {
+  heading,
+  level = 'h2',
+  intro,
+  introSecondary,
+  ctaLabel,
+  ctaHref,
+} = Astro.props;
+const Heading = level;
+---
+<div class="section-head">
+  <div>
+    <Heading class="display" data-anim="split-lines" set:html={heading} />
+    <hr class="rule" data-anim="fade" />
+  </div>
+  <div>
+    {intro && <p class="section-intro" data-anim="rise">{intro}</p>}
+    {introSecondary && (
+      <p class="section-intro" data-anim="rise" style="margin-top: 1rem;">{introSecondary}</p>
+    )}
+    {ctaLabel && ctaHref && (
+      <a class="cta" href={ctaHref} data-anim="rise" style="margin-top: 1.2rem;">
+        {ctaLabel} <Arrow class="cta-arrow" />
+      </a>
+    )}
+  </div>
+</div>

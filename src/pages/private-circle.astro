@@ -1,17 +1,34 @@
 ---
 import Base from '../layouts/Base.astro';
+import Arrow from '../components/Arrow.astro';
+import Placeholder from '../components/Placeholder.astro';
 ---
-<Base title="Private Circle — LANNCO">
+<Base
+  title="Private Circle — LANNCO"
+  description="Our Private Circle is reserved for clients and partners by invitation only."
+>
   <section class="section">
-    <div class="container page-stub">
-      <h1 class="display" data-anim="split-lines">Access by Invitation</h1>
-      <hr class="rule" data-anim="fade" />
-      <p class="section-intro" data-anim="rise">
-        Our Private Circle is reserved for clients and partners by invitation only.
-      </p>
-      <a class="cta" href="/contact/" data-anim="rise">
-        Request Access <span class="cta-arrow">&#10230;</span>
-      </a>
+    <div class="container lead">
+      <div class="lead-copy">
+        <h1 class="display" data-anim="split-lines">Access by Invitation</h1>
+        <hr class="rule" data-anim="fade" />
+        <p data-anim="rise">
+          Our Private Circle is reserved for clients and partners by invitation only.
+        </p>
+        <a class="cta" href="/contact/" data-anim="rise">
+          Request Access <Arrow class="cta-arrow" />
+        </a>
+      </div>
+      <div class="lead-visual">
+        <Placeholder
+          asset="#5 red maple branch against dark interior wall + shoji light"
+          variant="dark"
+          ratio="4 / 3"
+        />
+      </div>
+    </div>
+    <div class="container">
+      <p class="circle-tagline label" data-anim="rise">Discreet. Selective. Exclusive.</p>
     </div>
   </section>
 </Base>
