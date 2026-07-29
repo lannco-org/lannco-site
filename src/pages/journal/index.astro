@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { getIndex, articleHref, formatDate } from '../../data/journal';
+
+// Board C: one large featured card plus a row of smaller ones. Cards link to
+// the article routes as of Phase 3; the full list lives at /journal/all/.
+const { featured, rest } = await getIndex();
+---
+<Base
+  title="Journal — LANNCO"
+  description="Perspectives on capital, markets, and the future of global opportunity."
+>
+  <section class="section">
+    <div class="container">
+      <SectionHead
+        heading="Insights<br />Beyond Borders"
+        level="h1"
+        intro="Perspectives on capital, markets, and the future of global opportunity."
+        ctaLabel="View All Articles"
+        ctaHref="/journal/all/"
+      />
+
+      <a class="journal-featured" href={articleHref(featured)} data-anim="rise">
+        <div class="journal-media journal-featured-media">
+          <Placeholder asset={featured.data.asset} variant="dark" ratio="16 / 9" />
+        </div>
+        <div class="journal-featured-body">
+          <span class="journal-cat label">{featured.data.category}</span>
+          <h2 class="display">{featured.data.title}</h2>
+          <span class="journal-date">{formatDate(featured.data.date)}</span>
+        </div>
+      </a>
+
+      <div class="journal-grid" data-anim-stagger>
+        {rest.map((article) => (
+          <a class="journal-card" href={articleHref(article)}>
+            <div class="journal-media">
+              <Placeholder asset={article.data.asset} variant="dark" ratio="4 / 3" />
+            </div>
+            <span class="journal-cat label">{article.data.category}</span>
+            <h3>{article.data.title}</h3>
+            <span class="journal-date">{formatDate(article.data.date)}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

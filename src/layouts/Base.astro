@@ -4,15 +4,19 @@ import '@fontsource-variable/inter';
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import Seal from '../components/Seal.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Homepage only: the branded hold that gates the hero's load-in. */
+  preloader?: boolean;
 }
 
 const {
   title = 'LANNCO — Connecting Capital. Markets. People.',
   description = 'An independent advisory and strategic introductions platform, connecting capital, markets, and people across Asia, the Middle East, Europe and Africa.',
+  preloader = false,
 } = Astro.props;
 ---
 <!doctype html>
@@ -26,8 +30,32 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    {/* Runs before first paint so pre-reveal hidden states and the preloader
+        never flash for reduced-motion or no-JS visitors — for them `motion-ok`
+        is never set, so every hidden state stays off and content is just there.
+        The failsafe covers the module failing to load (e.g. the dev-server dep
+        504 in docs/HANDOFF.md): rather than leave the page blank, un-hide it. */}
+    <script is:inline>
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var html = document.documentElement;
+        html.classList.add('motion-ok');
+        window.__lanncoMotionFailsafe = window.setTimeout(function () {
+          html.classList.remove('motion-ok');
+          html.classList.add('motion-failed');
+        }, 4000);
+      })();
+    </script>
   </head>
   <body>
+    {preloader && (
+      <div class="preloader" data-preloader>
+        <span class="preloader-mark" data-preloader-mark>
+          <Seal class="preloader-seal" />
+          <span class="preloader-word">LANNCO</span>
+        </span>
+      </div>
+    )}
     <Nav />
     <main>
       <slot />

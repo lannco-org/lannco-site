@@ -46,44 +46,8 @@ export const processSteps = [
   },
 ] as const;
 
-/**
- * Journal articles. Bodies are still awaited from the client, so these are
- * index entries only and do not link anywhere yet — Phase 3 converts this to an
- * Astro content collection with real article routes.
- */
-export const articles = [
-  {
-    title: 'The Rise of Private Capital in the GCC',
-    category: 'Insights',
-    date: 'June 2024',
-    featured: true,
-    asset: '#11 abstract architecture',
-  },
-  {
-    title: 'Why Asia is Investing in Europe',
-    category: 'Perspectives',
-    date: 'May 2024',
-    asset: '#11 misty mountain valley',
-  },
-  {
-    title: 'Institutional Commodities Outlook',
-    category: 'Outlook',
-    date: 'April 2024',
-    asset: '#11 dark sea stack',
-  },
-  {
-    title: 'Luxury Golf Estates: A New Asset Class',
-    category: 'Insights',
-    date: 'March 2024',
-    asset: '#11 golf-estate landscape',
-  },
-  {
-    title: 'Tokenization of Real Assets',
-    category: 'Outlook',
-    date: 'February 2024',
-    asset: '#11 brutalist building',
-  },
-];
+/* Journal articles moved to the `journal` content collection in Phase 3 —
+   src/content/journal/*.md, read through src/data/journal.ts. */
 
 /** About timeline, reverse-chronological (Board B). */
 export const timeline = [

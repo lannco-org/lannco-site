@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Kanji from '../components/Kanji.astro';
 import Seal from '../components/Seal.astro';
 import Arrow from '../components/Arrow.astro';
+import HeroArt from '../components/HeroArt.astro';
 import WorldMap from '../components/WorldMap.astro';
 import { stats, locations } from '../data/site';
 
@@ -34,8 +35,10 @@ const capabilities = [
 ];
 const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
 ---
-<Base>
-  <section class="hero">
+<Base preloader>
+  {/* data-intro: everything in here plays as one choreographed load-in behind
+      the preloader instead of firing on scroll. Order follows the DOM. */}
+  <section class="hero" data-intro>
     <div class="container">
       <div class="hero-grid">
         <div class="hero-copy">
@@ -54,7 +57,9 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
           </a>
         </div>
         <div class="hero-visual">
-          <div class="hero-img" data-parallax="0.12"></div>
+          <div class="hero-media" data-anim="mask-up">
+            <HeroArt parallax="0.12" />
+          </div>
           <span class="hero-kanji" data-parallax="0.05" aria-hidden="true"><Kanji /></span>
           <Seal class="hero-seal" />
         </div>
@@ -63,6 +68,9 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
         </ul>
       </div>
     </div>
+    {/* Board C's mobile hero ends on a SCROLL cue; the reference site keeps the
+        same label at desktop, bottom-left. */}
+    <span class="scroll-cue label" data-anim="fade" aria-hidden="true">Scroll</span>
   </section>
 
   <section class="section section-alt">
@@ -73,7 +81,7 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
           <hr class="rule" data-anim="fade" />
         </div>
         <div>
-          <p class="section-intro" data-anim="rise">
+          <p class="section-intro" data-anim="char-fade">
             We operate with discretion, integrity, and a deep understanding of cultures, markets,
             and relationships.
           </p>
@@ -101,7 +109,7 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
       <div class="lead-copy">
         <h2 class="display" data-anim="split-lines">Global Presence</h2>
         <hr class="rule" data-anim="fade" />
-        <p data-anim="rise">
+        <p data-anim="char-fade">
           A global network built on trust, relationships, and cultural intelligence.
         </p>
         <ul class="location-list" data-anim-stagger>
@@ -118,7 +126,7 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
     <div class="container stat-row stat-row-compact" data-anim-stagger>
       {stats.slice(0, 2).map(({ value, label }) => (
         <div class="stat">
-          <span class="stat-value display">{value}</span>
+          <span class="stat-value display" data-anim="count">{value}</span>
           <span class="stat-label label">{label}</span>
         </div>
       ))}

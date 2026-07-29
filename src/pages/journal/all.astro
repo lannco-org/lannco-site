@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { getArticles, articleHref, formatDate } from '../../data/journal';
+
+// Board C's third mobile board: an "All Articles" list view — rows of title +
+// date with a thumbnail on the right, hairline between them. Desktop widens the
+// same rows and adds the category label the cards carry, rather than switching
+// back to a grid (the index already owns the card treatment).
+const articles = await getArticles();
+---
+<Base
+  title="All Articles — LANNCO Journal"
+  description="Every article from the LANNCO Journal — perspectives on capital, markets, and the future of global opportunity."
+>
+  <section class="section">
+    <div class="container">
+      <h1 class="display article-list-head" data-anim="split-lines">All Articles</h1>
+      <hr class="rule" data-anim="fade" />
+
+      <ul class="article-list" data-anim-stagger>
+        {articles.map((article) => (
+          <li>
+            <a class="article-row" href={articleHref(article)}>
+              <span class="journal-cat label">{article.data.category}</span>
+              <span class="article-row-copy">
+                <span class="article-row-title display">{article.data.title}</span>
+                <span class="journal-date">{formatDate(article.data.date)}</span>
+              </span>
+              <span class="journal-media article-row-thumb">
+                <Placeholder asset={article.data.asset} variant="dark" ratio="1 / 1" />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

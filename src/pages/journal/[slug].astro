@@ -1,0 +1,68 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Arrow from '../../components/Arrow.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { getArticles, articleHref, formatDate } from '../../data/journal';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article, i) => ({
+    params: { slug: article.id },
+    props: {
+      article,
+      // Next older article, wrapping back to the newest at the end of the run.
+      next: articles.length > 1 ? articles[(i + 1) % articles.length] : undefined,
+    },
+  }));
+}
+
+const { article, next } = Astro.props;
+const { title, category, date, asset, bodyPending } = article.data;
+const { Content } = await render(article);
+---
+<Base
+  title={`${title} — LANNCO Journal`}
+  description={`${category}, ${formatDate(date)}. Perspectives on capital, markets, and the future of global opportunity.`}
+>
+  <article class="section article">
+    {/* The width cap is on the inner header, not on .container — .container
+        centres itself, so capping it directly would centre the whole block away
+        from the left-aligned heading rule the rest of the site uses. */}
+    <div class="container">
+      <header class="article-head">
+        <span class="journal-cat label" data-anim="fade">{category}</span>
+        <h1 class="display" data-anim="split-lines">{title}</h1>
+        <hr class="rule" data-anim="fade" />
+        <span class="journal-date" data-anim="fade">{formatDate(date)}</span>
+      </header>
+    </div>
+
+    <div class="container">
+      <div class="journal-media article-hero" data-anim="fade">
+        <Placeholder asset={asset} variant="dark" ratio="16 / 9" />
+      </div>
+    </div>
+
+    <div class="container article-body">
+      {bodyPending ? (
+        /* Client has not supplied article bodies yet (docs/COPY.md open
+           question 2). Same treatment as the capability pillars: say so rather
+           than invent copy. */
+        <p class="pillars-pending" data-anim="rise">This article is being finalised.</p>
+      ) : (
+        <div class="prose" data-anim="rise"><Content /></div>
+      )}
+    </div>
+
+    <nav class="container article-foot" aria-label="More from the Journal">
+      <a class="cta" href="/journal/all/">All Articles <Arrow class="cta-arrow" /></a>
+      {next && (
+        <a class="article-next" href={articleHref(next)}>
+          <span class="label">Read next</span>
+          <span class="display">{next.data.title}</span>
+        </a>
+      )}
+    </nav>
+  </article>
+</Base>

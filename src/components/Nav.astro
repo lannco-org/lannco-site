@@ -1,5 +1,10 @@
 ---
 import Seal from './Seal.astro';
+import { getIndex, articleHref } from '../data/journal';
+
+// The announcement bar promotes the featured article (COPY.md § Global). Read
+// from the collection so the headline and the link cannot drift from it.
+const { featured } = await getIndex();
 
 const links = [
   { href: '/about/', label: 'About' },
@@ -18,8 +23,8 @@ const { pathname } = Astro.url;
 ---
 <div class="announce" data-announce>
   <p>
-    LANNCO Journal: The Rise of Private Capital in the GCC
-    <a href="/journal/">Read Now &rarr;</a>
+    LANNCO Journal: {featured.data.title}
+    <a href={articleHref(featured)}>Read Now &rarr;</a>
   </p>
   <button class="announce-close" data-announce-close aria-label="Dismiss announcement">&#215;</button>
 </div>
