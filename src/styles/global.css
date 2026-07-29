@@ -14,7 +14,8 @@
   --font-display: 'Cormorant Variable', 'Cormorant', Georgia, serif;
   --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
 
-  --text-hero: clamp(3.2rem, 7.5vw, 6rem);
+  /* Board A measures ~55px at a 1280 viewport — 4.3vw tracks that. */
+  --text-hero: clamp(2.75rem, 4.3vw, 4.5rem);
   --text-h2: clamp(2.2rem, 4.5vw, 3.4rem);
   --text-h3: clamp(1.4rem, 2.2vw, 1.9rem);
   --text-body: 0.98rem;
@@ -184,18 +185,27 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
 .hero {
   position: relative;
   overflow: clip;
-  padding-block: var(--space-section) 0;
+  padding-block: clamp(2.5rem, 6vh, 4.5rem) 0;
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(20rem, 5fr) 7fr;
-  gap: var(--gutter);
+  grid-template-rows: 1fr auto;
+  /* Tight row gap: the region strip sits close under the image in Board A. */
+  gap: clamp(0.75rem, 1.5vh, 1.5rem) var(--gutter);
   align-items: center;
-  min-height: min(78vh, 52rem);
+  min-height: min(70vh, 44rem);
 }
 
-.hero-copy { max-width: 26ch; }
+.hero-copy,
+.hero-visual { grid-row: 1; }
+
+/* No `ch` cap here: ch resolves against the body font, so it collapsed the
+   column to 257px while the H1 renders at up to 72px, and SplitText's
+   overflow:clip line masks then sheared the words. Rem keeps the two in the
+   same unit space, and the line breaks in the markup are explicit anyway. */
+.hero-copy { max-width: 34rem; }
 .hero-copy h1 { font-size: var(--text-hero); }
 .hero-copy .rule { margin: 2.2rem 0 1.6rem; }
 .hero-sub { color: var(--ink-soft); max-width: 34ch; margin-bottom: 2.4rem; }
@@ -221,24 +231,28 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
   pointer-events: none;
 }
 
+/* Sits in the grid's second column so it lines up under the image, per the
+   mockups — it is not a full-width strip. */
 .hero-regions {
+  grid-column: 2;
+  grid-row: 2;
   display: flex;
+  justify-content: space-between;
   gap: clamp(1.5rem, 4vw, 4rem);
-  margin-top: clamp(2.5rem, 6vh, 4rem);
-  padding-block: 1.4rem;
-  border-top: 1px solid var(--line);
+  /* Labels sit above the hairline, active marker on the line beneath them. */
+  padding-block: 0 1.4rem;
+  border-bottom: 1px solid var(--line);
 }
 .hero-regions li {
   font-size: var(--text-label);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   position: relative;
-  padding-top: 0.9rem;
 }
 .hero-regions li::before {
   content: '';
   position: absolute;
-  top: -1.4rem;
+  bottom: -1.4rem;
   left: 0;
   width: 100%;
   height: 2px;
@@ -249,8 +263,10 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
 .hero-regions li.is-active::before { transform: scaleX(1); transition: transform 0.6s var(--ease-out); }
 
 @media (max-width: 56rem) {
-  .hero-grid { grid-template-columns: 1fr; min-height: 0; }
+  .hero-grid { grid-template-columns: 1fr; grid-template-rows: none; min-height: 0; }
+  .hero-copy, .hero-visual, .hero-regions { grid-column: 1; grid-row: auto; }
   .hero-visual { min-height: 20rem; }
+  .hero-regions { margin-top: 2rem; }
 }
 
 /* ------------------------------ capabilities ----------------------------- */

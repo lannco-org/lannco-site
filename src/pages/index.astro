@@ -34,8 +34,10 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
     <div class="container">
       <div class="hero-grid">
         <div class="hero-copy">
+          {/* Breaks are explicit: every mockup shows four lines, desktop and
+              mobile, so line count shouldn't drift with the column width. */}
           <h1 class="display" data-anim="split-lines">
-            Connecting Capital. Markets. <span class="accent">People.</span>
+            Connecting<br />Capital.<br />Markets.<br /><span class="accent">People.</span>
           </h1>
           <hr class="rule" data-anim="fade" />
           <p class="hero-sub" data-anim="rise">
@@ -50,10 +52,10 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
           <div class="hero-img" data-parallax="0.12"></div>
           <span class="hero-kanji" data-parallax="0.05" aria-hidden="true">嵐</span>
         </div>
+        <ul class="hero-regions" data-anim-stagger>
+          {regions.map((region) => <li>{region}</li>)}
+        </ul>
       </div>
-      <ul class="hero-regions" data-anim-stagger>
-        {regions.map((region) => <li>{region}</li>)}
-      </ul>
     </div>
   </section>
 

@@ -14,10 +14,14 @@ Context for continuing the build in a fresh session. Plan/phases/decisions: [PLA
 - Animation opt-in via data attributes, all handled in `src/scripts/motion.ts`:
   `data-anim="split-lines"` (masked line reveal, waits for `document.fonts.ready`) · `data-anim="rise"` · `data-anim="fade"` · `data-anim-stagger` (container; direct children stagger) · `data-parallax="0.12"` (speed).
 - Pre-reveal hidden states are CSS rules gated on `html.motion-ok` (set by motion.ts only when `prefers-reduced-motion` allows). Add new hidden states the same way.
+- **Never size a display-type container in `ch`.** `ch` resolves against the *element's own* font — on `.hero-copy` (body font, 0.98rem) `max-width: 26ch` computed to 257px while the H1 rendered at 96px needing 430px, and SplitText's `overflow: clip` line masks sheared every word ("Connecting" → "Conne"). Fixed 2026-07-29 by switching to `rem`. The failure mode is nasty because the animation is working correctly — it's the mask that clips, so it reads as a broken animation. Use `rem` for anything a display heading lives inside.
+- **Hero H1 line breaks are explicit `<br>`**, not natural wrapping: every board shows four lines at every width, so line count must not drift with column width. SplitText respects the breaks.
+- Hero type scale is calibrated to Board A (~55px at a 1280 viewport) → `--text-hero: clamp(2.75rem, 4.3vw, 4.5rem)`. The original 7.5vw/6rem was ~75% oversized.
 - Placeholder imagery pattern: `.hero-img` gradient; capability cards use `data-texture="stone|silk|ink|marble"`. Swap these for real assets in Phase 5.
 - Section rhythm: `.section` (+ `.section-alt` for the darker paper band), `.section-head` two-column header (display H2 + red `.rule` left, intro + `.cta` right).
 - Footer phone numbers/email are mockup placeholders — flagged in COPY.md open questions.
-- Mobile nav is intentionally absent (`.nav-links` hidden < 56rem); hamburger menu is a Phase 4 task.
+- Mobile nav is intentionally absent (`.nav-links` hidden < 56rem); hamburger menu is a Phase 4 task. **Two live gaps:** under 56rem there is currently *no* way to reach any page except Private Circle, and all three boards show the hamburger at desktop width too (it's a global element, not a breakpoint fallback) — so it's missing everywhere, not just mobile.
+- Verified in a real browser with Playwright driving system Chrome (`chromium.launch({ channel: 'chrome' })` — the cached Playwright chromium build is version-mismatched, so use the channel). Measuring mask `clientWidth` vs `scrollWidth` on `[data-anim="split-lines"]` children is the fastest way to catch clipped text.
 
 ## Layout notes per page (transcribed from client mockups — images NOT in repo)
 
