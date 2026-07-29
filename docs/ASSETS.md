@@ -33,6 +33,32 @@ Status: client has **screenshots only** (no Figma, no exports). Every hero-grade
 
 **Open issue on #15:** the SVG `<text>` labels scale with the viewBox, so they shrink to unreadable at mobile widths. Board C's mobile board shows a bulleted location list next to the map instead of labels — hide the labels under ~56rem and render that list.
 
+## Generation prompts
+
+Portable across Firefly, GPT image and Midjourney. **Claude has no image model** — for Claude, the equivalent task is the vector version (`src/components/HeroArt.astro`), not raster art.
+
+**Aspect ratio matters and the table above is out of date on it.** #1 is described there as "vertical drama", written before the layout existed. The built hero column is *landscape-ish* — ~1.23:1 at desktop, ~1.1:1 at mobile — and the SVG slice-crops. So generate **1:1 at ≥2400px**, which crops safely to both. A 4:5 portrait will lose the summit or the ribbon.
+
+### #1 — hero mountain (master prompt)
+
+> Japanese sumi-e ink-wash painting of a single towering mountain peak emerging from dense mist, brushed in charcoal ink on warm ivory rice paper. One broad asymmetric summit, dark and sharply defined at the crest, dissolving downward into soft grey wash and then into bare paper — no ground line, no horizon. A single vivid vermilion silk ribbon sweeps across the lower third of the frame in one continuous curve, folding once so light catches the fold, both ends dissolving into the mist. Vast negative space: upper corners and lower third almost empty paper. Entirely monochrome except that one red accent. Visible brush texture, wet-edge ink bleed, paper grain. Serene, austere, expensive. No text, no signature, no seal, no border, no frame, no people, no buildings, no birds.
+
+Composition constraints that come from the build, not from taste — keep them:
+- **Peak centred or slightly right of centre.** The layout slice-crops the sides; a peak against an edge gets cut.
+- **Lower third must fall away to near-white.** The page hazes the image into the paper background, so a hard bottom edge or a dark base will show as a seam.
+- **The ribbon is the only saturated thing on the entire site.** One accent, deep seal red (`#a02a20`), not orange, not pink, not scarlet.
+
+Per-tool:
+- **Midjourney:** append `--ar 1:1 --style raw --s 150`. Omit `--v` so it uses your default version.
+- **Firefly:** Content type *Art*, aspect *Square*, and put this in Exclude: `text, watermark, signature, border, frame, people, buildings, birds, boats, saturated colours, orange, pink, blue sky, photorealistic, HDR`.
+- **GPT image:** paste the prompt as-is and ask for the largest square size available. It tends to add a signature or seal — if it does, say "remove all marks and signatures" rather than regenerating.
+
+### Locked style suffix (the object series, #6–#10)
+
+Append verbatim to every one of the studio-object prompts, so the twelve objects read as one shoot:
+
+> — single object centred on a seamless warm ivory backdrop (#f5f2ec), one soft key light from upper left, long soft shadow to lower right, charcoal blacks, no props, no text, no reflections on the backdrop, sumi-e restraint, museum-catalogue stillness
+
 ## Generation plan
 
 - Tool: Midjourney (or Firefly) with a locked style prompt suffix for consistency across the object series; upscale to 2×.

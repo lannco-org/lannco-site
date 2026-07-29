@@ -15,6 +15,17 @@ Context for continuing the build in a fresh session. Plan/phases/decisions: [PLA
 - **Git + deploy pipeline is live:** private repo `R4HC/lannco-site` → Vercel project `lannco-site`, pushes to `main` auto-deploy. Production green at `https://lannco-site.vercel.app`, gated behind Vercel Deployment Protection (SSO) so it is not public. Build config in `vercel.json`. **Repo-local `user.email` is set to the GitHub noreply address on purpose — don't remove it, or Vercel blocks builds.** Details in the PLAN.md decision log. Still never commit/push without Ryan's ask.
 - **Not built yet:** all of Phase 4's new motion (count-ups, map arc draw / dot pulses, process line draw, preloader, page transitions). `WorldMap` already carries `data-anim="arc-draw"` and `"dot-pulse"` hooks with `pathLength="1"` on the arcs, but `motion.ts` has no handlers for them, so those attributes are inert today.
 
+### Mobile (audited session 3, 2026-07-29)
+
+Swept 320 / 360 / 390 / 430px × 12 routes in touch-emulating Chrome, scrolling each page fully. **Clean:** no horizontal scroll, no text sheared by a split mask, nothing left unrevealed after scroll, no console errors, and no display heading crammed into a narrow column. Fixed in that pass:
+
+- `.section-head` now stacks under 44rem (see defect 3 below).
+- `.cap-card` goes `2 / 1` under 36rem. In one column the `3 / 4` portrait was 467px tall, so the four home cards alone were ~1.9m of scroll; the homepage went 4722px → 3555px. Board C's mobile home shows short wide bands, which this now matches.
+- Touch targets: the hamburger was 30×26px and is the *only* nav below 56rem — now 45×44 via padding with the extra pulled back by negative margin, so the hit area grew and the header layout did not move. Announcement dismiss 24×26 → 34×37. Footer nav links gained `padding-block`.
+- **Still under 32px tall:** the announcement's "Read Now", the brand lockup and the three `.cta` links. All are 93–223px *wide*, and their height is a function of the letterspaced label type the boards specify — changing it is a type-scale decision, not a bug fix. Left for the Phase 6 a11y pass.
+
+Menu verified by actual taps: opens, moves focus into the panel, closes on a second tap.
+
 ### How this was verified (reproduce it, don't trust it)
 
 Playwright driving **system Chrome** — `chromium.launch({ channel: 'chrome' })`, because the cached Playwright chromium build is version-mismatched. Two suites, written in the session scratchpad and **not committed** (worth re-creating under `tests/` if this grows):
@@ -76,7 +87,7 @@ Copy is in COPY.md — not repeated here. These notes cover structure only.
 
 1. ~~**The kanji is live CJK text**~~ — **fixed session 2.** All three usages (hero watermark, nav seal, favicon) now render vector outlines from `Kanji.astro`; no CJK font is shipped or depended on. See ASSETS.md #12 for how the outline was sourced.
 2. **Capability 04 is named inconsistently.** COPY.md has "Opportunities" for the home/overview cards but "Alternative Assets" in the capability-detail sub-nav, and both appear across the boards. Pick one before building the detail pages, or the sub-nav won't match the card the user clicked. **Still open.**
-3. **`.section-head` never stacks on mobile.** It is `grid-template-columns: 1fr auto` at every width with no breakpoint, so at 390px the display heading is squeezed into a narrow column beside the intro copy ("Insights / Beyond / Borders" on three lines). Board C's mobile boards stack the heading above the copy. Affects every page using `SectionHead.astro` — home capabilities band, capabilities overview, sectors, our-process, journal, global-presence. Fix is a `@media (max-width: 44rem) { .section-head { grid-template-columns: 1fr; } }`. Found session 3, **left unapplied on purpose** — it restyles six pages that were signed off in Phase 2, so it belongs to the Phase 6 polish pass or Ryan's call.
+3. ~~**`.section-head` never stacks on mobile**~~ — **fixed session 3** (stacks under 44rem). It had been two columns at every width, leaving "Sectors We Serve" 87px wide of an available 390px on every page using `SectionHead.astro`.
 4. **Two journal categories were inferred, not supplied.** COPY.md lists categories for only the first three articles; "Luxury Golf Estates" (Insights) and "Tokenization of Real Assets" (Outlook) were assigned in Phase 2 and now live in the content collection frontmatter. Worth confirming with the client.
 5. **Dev-server gotcha, not a code bug:** editing `package.json` invalidates Vite's dep cache, and a long-running `astro dev` then serves `504 (Outdated Optimize Dep)` for gsap/lenis. The whole client module fails and every interaction looks broken. Restart dev (and `rm -rf node_modules/.vite`) before debugging anything that smells like "the JS stopped running".
 

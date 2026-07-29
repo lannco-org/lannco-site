@@ -117,7 +117,8 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
   font-size: 1.1rem;
   line-height: 1;
   color: rgba(253, 252, 250, 0.6);
-  padding: 0.25rem 0.4rem;
+  /* Padded for touch; it is absolutely positioned, so this costs no layout. */
+  padding: 0.6rem 0.7rem;
   transition: color 0.3s var(--ease-out);
 }
 .announce-close:hover { color: var(--white); }
@@ -204,12 +205,16 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
 
 .nav-end { display: flex; align-items: center; gap: clamp(1rem, 2vw, 2rem); }
 
-/* Hamburger — shown at every width, per the boards. */
+/* Hamburger — shown at every width, per the boards. Below 56rem it is the only
+   way to navigate, so the hit area is padded out to ~44px and the extra is
+   pulled back with negative margin: touch target grows, layout does not move. */
 .nav-toggle {
   display: grid;
   gap: 0.32rem;
-  padding: 0.4rem 0.1rem;
+  padding: 0.95rem 0.45rem;
+  margin: -0.55rem -0.35rem;
   width: 1.9rem;
+  box-sizing: content-box;
 }
 .nav-toggle span {
   display: block;
@@ -446,6 +451,16 @@ html.motion-ok .preloader { display: grid; }
 .section-head .rule { margin-top: 1.4rem; }
 .section-head .section-intro { color: var(--ink-soft); max-width: 42ch; }
 
+/* Stack on phones. Two columns at 390px left the display heading 87px wide
+   ("Sectors / We / Serve") while the intro took the rest — Board C's mobile
+   boards run the heading full width with the copy beneath it. */
+@media (max-width: 44rem) {
+  .section-head {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -481,6 +496,14 @@ html.motion-ok .preloader { display: grid; }
 
 .cap-card h3 { font-family: var(--font-display); font-size: var(--text-h3); font-weight: 500; line-height: 1.15; }
 .cap-card .card-num { font-size: var(--text-label); letter-spacing: 0.18em; opacity: 0.7; margin-top: 0.8rem; }
+
+/* Must come after the base .cap-card rule — same specificity, so source order
+   decides. In one column the 3/4 portrait is ~467px tall and the four cards
+   become 1.9m of scrolling; Board C's mobile home runs them as short wide
+   bands. */
+@media (max-width: 36rem) {
+  .cap-card { aspect-ratio: 2 / 1; }
+}
 
 /* ---------------------------------- about -------------------------------- */
 
@@ -851,6 +874,8 @@ html.motion-ok .preloader { display: grid; }
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(253, 252, 250, 0.7);
+  /* 19px of line box is a thin thing to hit on a phone; the row gap absorbs it. */
+  padding-block: 0.4rem;
   transition: color 0.3s var(--ease-out);
 }
 .footer-nav a:hover { color: var(--white); }
