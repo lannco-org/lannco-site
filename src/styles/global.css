@@ -331,7 +331,11 @@ html.nav-open { overflow: hidden; }
 html.motion-ok .hero-mist { display: block; }
 .hero-copy,
 .hero-regions,
-.scroll-cue { position: relative; z-index: 2; }
+.scroll-cue,
+/* .hero-visual carries the watermark and seal and belongs in this group: without
+   it the element defaulted to auto, so the fog canvas at z-index 1 painted over
+   both and the kanji read as sitting *behind* the mountain. */
+.hero-visual { position: relative; z-index: 2; }
 
 .hero-copy,
 .hero-visual { grid-row: 1; }
@@ -351,7 +355,10 @@ html.motion-ok .hero-mist { display: block; }
    under the fog canvas (1) and the copy (2). */
 .hero-media {
   position: absolute;
-  inset: 0;
+  /* Bottom-anchored and short of full height so the art starts lower down the
+     page — the summit then clears the header instead of sitting tight under it. */
+  inset: auto 0 0 0;
+  height: 92%;
   z-index: 0;
   overflow: hidden;
 }
@@ -389,15 +396,48 @@ html.motion-ok .hero-mist { display: block; }
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: 68% center;
+  /* `contain`, not `cover`. The hero is ~2.2:1 (1440 wide against ~650 tall once
+     the announcement bar and header are subtracted) while the master is 1.79:1,
+     so cover scaled to width and cropped ~154px vertically — which took the
+     summit off the top. contain fits the whole frame, and since the master's
+     edges already dissolve to off-white, the horizontal slack reads as more
+     negative space rather than as letterboxing.
+     X is biased left of centre because the peak sits at ~58% across the file;
+     pulling the image left lands the summit near the middle of the viewport. */
+  /* Sized by height with `width: auto`, so the element's box IS the image's
+     aspect ratio — no object-fit needed, and nothing is cropped, so the whole
+     summit shows.
+     This replaced `object-fit: contain`, which looked identical but broke the
+     feather: under contain the <img> element still spans the full 1440px while
+     the painted content sits in a centred ~1100px region, so the edge mask faded
+     empty space and left a hard boundary on the picture itself — measured as a
+     10-value RGB step against --paper. With the box matched to the content, mask
+     percentages and visible edges finally coincide. */
+  inset: auto auto 0 50%;
+  translate: -50% 0;
+  width: auto;
+  height: 100%;
+  max-width: none;
   /* Only the bottom edge is feathered now. The old build faded all four because
      the image was a discrete rectangle whose ground (#efe8de..#f4eee4) didn't
      match --paper (#f5f2ec) and read as a visible box. Full-bleed removes three
      of those seams — the art now *is* the hero background. What remains is the
      boundary with the next section, so it dissolves there. */
-  mask-image: linear-gradient(to bottom, #000 0, #000 84%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 84%, transparent 100%);
+  /* All four edges feathered again. This was reduced to the bottom edge only
+     while the art was full-bleed `cover`, where three of the seams sat outside
+     the viewport and could not be seen. Under `contain` the image no longer
+     touches the left, right or top edges, so its rectangle became visible
+     against the page — the generated ground is #efe8de..#f4eee4 against --paper
+     #f5f2ec, close but not equal. Feathering dissolves the boundary rather than
+     trying to colour-match a gradient. */
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 88%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in;
 }
 /* Vector now (asset #12), so width drives the size rather than font-size —
    the old font stack was macOS-only. */
@@ -406,7 +446,13 @@ html.motion-ok .hero-mist { display: block; }
   right: 2%;
   top: 8%;
   width: clamp(8rem, 18vw, 16rem);
-  color: rgba(20, 19, 17, 0.07);
+  /* 0.07 was tuned against a hero where the watermark sat over pale paper. It
+     now overlaps dark rock, where 7% black is invisible — so the mark appeared
+     to stop at the mountain's edge. `multiply` keeps it reading as a watermark
+     pressed into the image rather than a grey shape floating on top, and it
+     holds on both the paper and the peak. */
+  color: rgba(20, 19, 17, 0.16);
+  mix-blend-mode: multiply;
   pointer-events: none;
 }
 .hero-kanji svg { width: 100%; height: auto; display: block; }
@@ -515,7 +561,27 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
     bottom: 0;
     height: 58%;
   }
-  .hero-photo { object-position: center 48%; }
+  /* `cover` again here, overriding the desktop `contain`. The portrait master in
+     this ~1.2:1 band would pillarbox to a tiny mountain under contain; the
+     vertical crop is wanted on mobile. */
+  .hero-photo {
+    /* Undo the desktop ratio-matched box: on mobile the art should fill the band
+       and crop, so the element goes back to spanning it with object-fit. */
+    inset: 0;
+    translate: none;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    object-position: center 48%;
+    /* Vertical only. Under `cover` the art fills the full width, so its left and
+       right edges land on the viewport edges — feathering them would pull paper
+       strips down both sides of the phone. */
+    mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%);
+    mask-composite: add;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%);
+    -webkit-mask-composite: source-over;
+  }
   /* Kept, unlike the earlier attempt that dropped it: the art's top edge now
      lands mid-page near the paragraph, so the copy still wants a paper wash
      behind it where the two meet. */
