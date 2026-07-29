@@ -4,3 +4,10 @@ dist/
 .DS_Store
 .env*
 .vercel
+
+# Local agent tooling, not project source. Added when the Higgsfield CLI's
+# companion skills were installed for image generation — they install into the
+# working directory but belong to the machine, not the client repo.
+.agents/
+.claude/
+skills-lock.json

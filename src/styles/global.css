@@ -346,37 +346,58 @@ html.motion-ok .hero-mist { display: block; }
 .hero-sub { color: var(--ink-soft); max-width: 34ch; margin-bottom: 2.4rem; }
 
 .hero-visual { position: relative; align-self: stretch; }
-/* Clips the wipe-in and gives the parallax something to translate inside. */
+/* Full-bleed art layer. Spans the whole section rather than the grid's right
+   column, so it sits *behind* the copy instead of beside it. z-index 0 keeps it
+   under the fog canvas (1) and the copy (2). */
 .hero-media {
   position: absolute;
   inset: 0;
+  z-index: 0;
   overflow: hidden;
+}
+/* Insurance for the headline, not a design element. Both masters are briefed
+   with an empty off-white zone where the copy lands, so at the intended ratios
+   this is invisible. It only does work when `cover` crops unusually — a short
+   wide window pulling rock leftward under the text. Paper-coloured, so it reads
+   as more negative space rather than as a scrim. */
+.hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    var(--paper) 0%,
+    color-mix(in srgb, var(--paper) 82%, transparent) 26%,
+    transparent 52%
+  );
 }
 /* The hero photograph (ASSETS.md #1).
    `cover` + centred position is deliberate arithmetic, not a default: the source
    is 1:1 and this box is ~1.23:1, so cover crops ~9.4% off the top and the same
    off the bottom. The summit starts at 17.4% and the lowest mist ends at 84.5%,
    so both survive with room to spare. Cropping from one side only would clip. */
+/* The hero art (ASSETS.md #1).
+   The masters are cut to the hero box rather than relying on `cover` to rescue a
+   mismatch: desktop is 5504x3072 (1.79:1) against a hero of ~1.8:1 at 1440x800,
+   mobile is 1600x2866 (0.56:1) against ~0.56:1 at 390x700. Both crop by only a
+   few percent, which is why the framing survives.
+   `object-position` biased right on desktop keeps the peak in frame when a short
+   window does crop the sides, and pushes the empty third under the headline. */
 .hero-photo {
   position: absolute;
-  inset: -6% 0;
+  inset: 0;
   width: 100%;
-  height: 112%;
+  height: 100%;
   object-fit: cover;
-  object-position: center;
-  /* The generated ground is #efe8de..#f4eee4 against our --paper #f5f2ec. Close,
-     but not close enough — as a hard-edged rectangle the difference reads as a
-     visible box. Feathering every edge dissolves the seam instead of trying to
-     colour-match a gradient-y ground. The right edge fade also lets the ribbon
-     end in mist rather than at a border. */
-  mask-image:
-    linear-gradient(to right, transparent 0, #000 7%, #000 92%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 5%, #000 86%, transparent 100%);
-  mask-composite: intersect;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0, #000 7%, #000 92%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 5%, #000 86%, transparent 100%);
-  -webkit-mask-composite: source-in;
+  object-position: 68% center;
+  /* Only the bottom edge is feathered now. The old build faded all four because
+     the image was a discrete rectangle whose ground (#efe8de..#f4eee4) didn't
+     match --paper (#f5f2ec) and read as a visible box. Full-bleed removes three
+     of those seams — the art now *is* the hero background. What remains is the
+     boundary with the next section, so it dissolves there. */
+  mask-image: linear-gradient(to bottom, #000 0, #000 84%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 84%, transparent 100%);
 }
 /* Vector now (asset #12), so width drives the size rather than font-size —
    the old font stack was macOS-only. */
@@ -467,7 +488,45 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
     min-height: 0;
   }
   .hero-copy, .hero-visual, .hero-regions { grid-column: 1; grid-row: auto; }
-  .hero-visual { min-height: 17rem; }
+  /* Was 17rem to reserve room for the image when it sat in the flow. The art is
+     full-bleed behind the copy now, so this only has to be tall enough to host
+     the watermark and seal, which are positioned against it. */
+  .hero-visual { min-height: 9rem; }
+  /* Bottom-anchored at the master's own aspect ratio — deliberately NOT a
+     percentage height with `cover`.
+     The hero runs ~1300px tall at 390 wide (0.30:1) because the copy needs that
+     room, while the mobile master is 0.56:1. Any `cover` fill therefore scales
+     to height and crops ~45% off the width, which blows the peak up and lifts it
+     behind the paragraph — and because the height fits exactly, object-position
+     Y has no effect at all, so no Y value can push it back down. Matching the
+     box to the file instead means zero crop: the full framing survives, empty
+     upper-left included, and the copy above it sits on clean paper the way board
+     C panel 10 shows. */
+  /* Lower band only, with a deliberate vertical crop.
+     The natural-ratio version overflowed: 100% width at the master's 0.56:1 is
+     ~699px tall against a hero of only ~560px, so `overflow: clip` ate the
+     image's empty top and exposed the peak exactly where the paragraph sits.
+     Capping the height means cropping instead — and here the crop is vertical
+     (box 1.2:1 vs file 0.56:1), so object-position Y finally does something.
+     48% selects the window holding the peak and the silk together, which is the
+     pairing board C panel 10 frames. */
+  .hero-media {
+    top: auto;
+    bottom: 0;
+    height: 58%;
+  }
+  .hero-photo { object-position: center 48%; }
+  /* Kept, unlike the earlier attempt that dropped it: the art's top edge now
+     lands mid-page near the paragraph, so the copy still wants a paper wash
+     behind it where the two meet. */
+  .hero-media::after {
+    background: linear-gradient(
+      to bottom,
+      var(--paper) 0%,
+      color-mix(in srgb, var(--paper) 70%, transparent) 22%,
+      transparent 48%
+    );
+  }
   .hero-copy .rule { margin: 1.8rem 0 1.4rem; }
   .hero-regions { margin-top: 1.75rem; }
   /* In one column the cue would land on top of the region strip. */

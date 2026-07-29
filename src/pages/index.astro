@@ -4,9 +4,43 @@ import Kanji from '../components/Kanji.astro';
 import Seal from '../components/Seal.astro';
 import Arrow from '../components/Arrow.astro';
 import WorldMap from '../components/WorldMap.astro';
-import { Picture } from 'astro:assets';
-import heroMountain from '../assets/hero-mountain.png';
+import { getImage } from 'astro:assets';
+import heroDesktop from '../assets/hero-desktop.png';
+import heroMobile from '../assets/hero-mobile.png';
 import { stats, locations } from '../data/site';
+
+/* The hero is art-directed: two separately generated masters, not one file
+   cropped twice. Board C frames desktop (panel 01) and mobile (panel 10)
+   differently — desktop keeps the whole peak with an empty left third for the
+   headline, mobile crops the peak against the right edge with the empty space
+   moved to the upper left. Cropping one master to both loses either the summit
+   or the silk.
+
+   `<Picture>` can't express that: it emits one image's sources, with no way to
+   swap the *source file* on a media query. So the sets are built here and the
+   <picture> is hand-rolled below — `<source media>` means the browser only ever
+   downloads the set that matches, unlike two <Picture>s toggled with CSS, where
+   both get fetched. */
+const HERO_MOBILE_Q = '(max-width: 56rem)';
+/* Desktop tops out at 5120: a 2560-wide display at DPR2 needs exactly that, and
+   the master is 5504. Mobile tops out at 1600 against 1290 needed for a 430px
+   phone at DPR3. */
+const heroDesktopWidths = [1280, 1920, 2560, 3200, 4096, 5120];
+const heroMobileWidths = [480, 720, 960, 1290, 1600];
+
+const heroSet = (src: ImageMetadata, format: 'avif' | 'webp' | 'jpeg', widths: number[]) =>
+  getImage({ src, format, widths, sizes: '100vw' });
+
+const [dAvif, dWebp, dJpeg, mAvif, mWebp, mJpeg] = await Promise.all([
+  heroSet(heroDesktop, 'avif', heroDesktopWidths),
+  heroSet(heroDesktop, 'webp', heroDesktopWidths),
+  /* jpeg, never png: the masters are PNG and the desktop one is 23MB, so a png
+     fallback would ship that to every browser without avif/webp. */
+  heroSet(heroDesktop, 'jpeg', heroDesktopWidths),
+  heroSet(heroMobile, 'avif', heroMobileWidths),
+  heroSet(heroMobile, 'webp', heroMobileWidths),
+  heroSet(heroMobile, 'jpeg', heroMobileWidths),
+]);
 
 const capabilities = [
   {
@@ -40,6 +74,36 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
   {/* data-intro: everything in here plays as one choreographed load-in behind
       the preloader instead of firing on scroll. Order follows the DOM. */}
   <section class="hero" data-intro>
+    {/* Full-bleed hero art (ASSETS.md #1). It sits outside `.container` on
+        purpose — the image spans the whole viewport and the copy overlays its
+        empty side, which is how Board C frames it. It used to live inside the
+        grid's right-hand column; that confined it to ~58vw and, at mobile
+        widths, made it compete with the copy for vertical space (see the
+        56rem block in global.css). Behind the copy instead, it can't be
+        squeezed. */}
+    <div class="hero-media" data-anim="mask-up">
+      <picture>
+        <source media={HERO_MOBILE_Q} type="image/avif" srcset={mAvif.srcSet.attribute} sizes="100vw" />
+        <source media={HERO_MOBILE_Q} type="image/webp" srcset={mWebp.srcSet.attribute} sizes="100vw" />
+        <source media={HERO_MOBILE_Q} type="image/jpeg" srcset={mJpeg.srcSet.attribute} sizes="100vw" />
+        <source type="image/avif" srcset={dAvif.srcSet.attribute} sizes="100vw" />
+        <source type="image/webp" srcset={dWebp.srcSet.attribute} sizes="100vw" />
+        <img
+          src={dJpeg.src}
+          srcset={dJpeg.srcSet.attribute}
+          sizes="100vw"
+          width={5504}
+          height={3072}
+          alt="A jagged snow-flecked mountain peak rising through mist, a current of deep red silk sweeping across its face"
+          class="hero-photo"
+          data-anim="drift"
+          data-parallax="0.08"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </picture>
+    </div>
     <div class="container">
       <div class="hero-grid">
         <div class="hero-copy">
@@ -57,28 +121,12 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
             Discover LANNCO <Arrow class="cta-arrow" />
           </a>
         </div>
-        <div class="hero-visual">
-          {/* ASSETS.md #1, delivered. The wipe lives on the wrapper and the
-              drift/parallax on the image itself, so the two never fight over
-              the same element's transform. Source is 1254px — see ASSETS.md,
-              it still wants an upscale before launch. */}
-          <div class="hero-media" data-anim="mask-up">
-            <Picture
-              src={heroMountain}
-              formats={['avif', 'webp']}
-              {/* Fallback must be jpeg: the source is a PNG, and Astro would
-                  otherwise ship a 2.3MB PNG to anything without avif/webp. */}
-              fallbackFormat="jpeg"
-              widths={[640, 900, 1254]}
-              sizes="(max-width: 56rem) 100vw, 60vw"
-              alt="Ink-wash mountain rising through mist, a red silk ribbon sweeping across its base"
-              class="hero-photo"
-              data-anim="drift"
-              data-parallax="0.08"
-              loading="eager"
-            />
-          </div>
-          <span class="hero-kanji" data-parallax="0.05" aria-hidden="true"><Kanji /></span>
+        {/* Now holds only the watermark and seal — the art moved out to the
+            full-bleed layer above. Kept as a grid cell because both are
+            positioned against it, and because it reserves the right-hand column
+            so the region strip below still lines up under the peak. */}
+        <div class="hero-visual" aria-hidden="true">
+          <span class="hero-kanji" data-parallax="0.05"><Kanji /></span>
           <Seal class="hero-seal" />
         </div>
         <ul class="hero-regions" data-anim-stagger>
