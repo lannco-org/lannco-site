@@ -6,6 +6,8 @@ Context for continuing the build in a fresh session. Plan/phases/decisions: [PLA
 
 - Project scaffolded, `npm run build` passes, all 7 routes serve 200, compiled bundle contains Lenis/ScrollTrigger/SplitText (verified via `npm run preview` + curl).
 - **Done:** design tokens (`src/styles/global.css`), base layout + nav + footer, homepage (hero + capabilities section) with first animations, stub pages for about/capabilities/sectors/journal/contact/private-circle.
+- **Done session 2:** hero sizing/clipping fixes, global hamburger + menu panel, 404 page, favicon, and vector assets #12/#13(square)/#15/#16/#17 as Astro components (`Kanji`, `Seal`, `WorldMap`, `ProcessIcon`, `Arrow`). 8 pages build. `WorldMap` and `ProcessIcon` are built but **not yet placed on any page** — they're waiting on the Phase 2 Global Presence and Our Process pages.
+- Browser verification harness lives in the scratchpad, not the repo: a 45-assertion Playwright suite covering the menu across desktop/mobile/reduced-motion. Worth re-creating as `tests/` if this grows.
 - **Everything visual is on placeholder gradients** — no real imagery exists yet (client supplied only screenshots). Generation list + priority: ASSETS.md.
 - **Git + deploy pipeline is live** (session 2): private repo `R4HC/lannco-site` → Vercel project `lannco-site`, pushes to `main` auto-deploy. Production builds green at `https://lannco-site.vercel.app`, gated behind Vercel Deployment Protection (SSO) so it's not public. Build config lives in `vercel.json`. **Repo-local `user.email` is set to the GitHub noreply address on purpose — don't remove it, or Vercel blocks builds.** Full details in the PLAN.md decision log. Still never commit/push without Ryan's ask.
 
@@ -20,7 +22,8 @@ Context for continuing the build in a fresh session. Plan/phases/decisions: [PLA
 - Placeholder imagery pattern: `.hero-img` gradient; capability cards use `data-texture="stone|silk|ink|marble"`. Swap these for real assets in Phase 5.
 - Section rhythm: `.section` (+ `.section-alt` for the darker paper band), `.section-head` two-column header (display H2 + red `.rule` left, intro + `.cta` right).
 - Footer phone numbers/email are mockup placeholders — flagged in COPY.md open questions.
-- Mobile nav is intentionally absent (`.nav-links` hidden < 56rem); hamburger menu is a Phase 4 task. **Two live gaps:** under 56rem there is currently *no* way to reach any page except Private Circle, and all three boards show the hamburger at desktop width too (it's a global element, not a breakpoint fallback) — so it's missing everywhere, not just mobile.
+- **Nav/menu is built** (session 2): hamburger at every width → full-screen `.nav-panel`. Lives in `src/scripts/nav.ts`, **deliberately separate from motion.ts** because that module returns early under `prefers-reduced-motion` and the menu is navigation, not decoration. It emits `lannco:menu` so motion.ts can `lenis.stop()/start()`. Header/announce sit at `z-index: 70` above the panel's `60` so the toggle stays clickable as the close button. Announcement bar has a dismiss (sessionStorage). Footer carries a nav row — not in the boards, it's the no-JS fallback.
+  - Gotcha worth keeping: do **not** put `visibility` in the panel's transition. Interpolated visibility means the panel is still `hidden` when `focus()` fires, so focus silently goes nowhere — it passed under reduced-motion and failed everywhere else. Uses `visibility 0s linear 0.5s` plus a `requestAnimationFrame` before focusing.
 - Verified in a real browser with Playwright driving system Chrome (`chromium.launch({ channel: 'chrome' })` — the cached Playwright chromium build is version-mismatched, so use the channel). Measuring mask `clientWidth` vs `scrollWidth` on `[data-anim="split-lines"]` children is the fastest way to catch clipped text.
 
 ## Layout notes per page (transcribed from client mockups — images NOT in repo)
@@ -58,8 +61,9 @@ Copy is in COPY.md — not repeated here. These notes cover structure only.
 
 ## Known defects found reading across the docs (2026-07-29, session 2)
 
-1. **The kanji is live CJK text, but ASSETS.md #12 says it must be SVG.** `.hero-kanji` (and the `favicon.svg` added this session) set `font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif` — macOS-only faces. On Windows/Android/Linux this falls back to whatever serif exists and can render 嵐 differently or as tofu, and the nav's `.seal-mark` has the same exposure. ASSETS.md anticipated exactly this ("avoids shipping a CJK font"). Fix = build asset #12/#13 as SVG and swap all three usages.
-2. **Capability 04 is named inconsistently.** COPY.md has "Opportunities" for the home/overview cards but "Alternative Assets" in the capability-detail sub-nav, and both appear across the boards. Pick one before building the detail pages, or the sub-nav won't match the card the user clicked.
+1. ~~**The kanji is live CJK text**~~ — **fixed session 2.** All three usages (hero watermark, nav seal, favicon) now render vector outlines from `Kanji.astro`; no CJK font is shipped or depended on. See ASSETS.md #12 for how the outline was sourced.
+2. **Capability 04 is named inconsistently.** COPY.md has "Opportunities" for the home/overview cards but "Alternative Assets" in the capability-detail sub-nav, and both appear across the boards. Pick one before building the detail pages, or the sub-nav won't match the card the user clicked. **Still open.**
+3. **Dev-server gotcha, not a code bug:** editing `package.json` invalidates Vite's dep cache, and a long-running `astro dev` then serves `504 (Outdated Optimize Dep)` for gsap/lenis. The whole client module fails and every interaction looks broken. Restart dev (and `rm -rf node_modules/.vite`) before debugging anything that smells like "the JS stopped running".
 
 ## Inputs needed from Ryan (blockers, current)
 

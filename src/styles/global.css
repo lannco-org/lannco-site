@@ -88,28 +88,48 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
   font-weight: 500;
   color: var(--seal);
 }
-.cta .cta-arrow { transition: transform 0.4s var(--ease-out); }
+.cta .cta-arrow {
+  width: 2.1rem;
+  height: auto;
+  transition: transform 0.4s var(--ease-out);
+}
 .cta:hover .cta-arrow { transform: translateX(0.4rem); }
 
 /* ------------------------------ announcement ----------------------------- */
 
 .announce {
+  position: relative;
+  z-index: 70; /* stays above the menu panel */
   background: #0d0c0b;
   color: var(--white);
   font-size: var(--text-label);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-align: center;
-  padding: 0.7rem var(--gutter);
+  padding: 0.7rem calc(var(--gutter) + 1.5rem);
 }
 .announce a { color: #d98d85; margin-left: 0.9rem; }
+.announce-close {
+  position: absolute;
+  top: 50%;
+  right: var(--gutter);
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  line-height: 1;
+  color: rgba(253, 252, 250, 0.6);
+  padding: 0.25rem 0.4rem;
+  transition: color 0.3s var(--ease-out);
+}
+.announce-close:hover { color: var(--white); }
 
 /* ---------------------------------- nav ---------------------------------- */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  /* Above .nav-panel (60) so the brand stays put and the toggle — which is the
+     close button once open — remains clickable. */
+  z-index: 70;
   background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
@@ -133,13 +153,19 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
   letter-spacing: 0.42em;
   font-size: 1.05rem;
 }
-.nav-brand .seal-mark {
+/* Seal stamp (asset #13) — vector glyph in a CSS border box, sized by
+   font-size so it can be dropped anywhere. */
+.seal {
+  display: inline-grid;
+  place-items: center;
   color: var(--seal);
-  font-size: 1.1rem;
-  border: 1px solid var(--seal);
-  padding: 0.05rem 0.2rem;
-  line-height: 1.2;
+  border: 1px solid currentColor;
+  padding: 0.2em;
+  line-height: 0;
 }
+.seal svg { width: 0.95em; height: 0.95em; display: block; }
+
+.nav-brand .seal-mark { font-size: 1rem; }
 
 .nav-links { display: flex; gap: 2.4rem; }
 .nav-links a {
@@ -176,8 +202,81 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
   background: var(--seal);
 }
 
+.nav-end { display: flex; align-items: center; gap: clamp(1rem, 2vw, 2rem); }
+
+/* Hamburger — shown at every width, per the boards. */
+.nav-toggle {
+  display: grid;
+  gap: 0.32rem;
+  padding: 0.4rem 0.1rem;
+  width: 1.9rem;
+}
+.nav-toggle span {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: var(--ink);
+  transition: transform 0.4s var(--ease-out), opacity 0.3s var(--ease-out);
+}
+.nav-toggle.is-open span:nth-child(1) { transform: translateY(0.42rem) rotate(45deg); }
+.nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+.nav-toggle.is-open span:nth-child(3) { transform: translateY(-0.42rem) rotate(-45deg); }
+
+.nav-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--paper);
+  display: grid;
+  align-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* visibility flips instantly on open and only after the fade on close: if it
+     is interpolated, the panel is still `hidden` when nav.ts calls focus(),
+     and an invisible element cannot take focus. */
+  transition: opacity 0.5s var(--ease-out), visibility 0s linear 0.5s;
+}
+.nav-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.5s var(--ease-out), visibility 0s linear 0s;
+}
+
+.nav-panel-inner { display: grid; gap: clamp(0.5rem, 1.5vh, 1.1rem); }
+.nav-panel-inner a {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.1;
+  width: fit-content;
+  opacity: 0;
+  transform: translateY(1.2rem);
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), color 0.3s;
+}
+.nav-panel.is-open .nav-panel-inner a { opacity: 1; transform: none; }
+.nav-panel-inner a:hover,
+.nav-panel-inner a[aria-current='page'] { color: var(--seal); }
+/* Stagger the panel links in behind the panel fade. */
+.nav-panel-inner a:nth-child(1) { transition-delay: 0.12s; }
+.nav-panel-inner a:nth-child(2) { transition-delay: 0.18s; }
+.nav-panel-inner a:nth-child(3) { transition-delay: 0.24s; }
+.nav-panel-inner a:nth-child(4) { transition-delay: 0.30s; }
+.nav-panel-inner a:nth-child(5) { transition-delay: 0.36s; }
+.nav-panel-inner a:nth-child(6) { transition-delay: 0.42s; }
+
+html.nav-open { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-panel,
+  .nav-panel-inner a,
+  .nav-toggle span { transition: none; }
+  .nav-panel-inner a { opacity: 1; transform: none; }
+}
+
 @media (max-width: 56rem) {
-  .nav-links { display: none; } /* mobile menu ships in Phase 4 */
+  .nav-links { display: none; } /* the panel is the only nav below this width */
+  .nav-private { display: none; } /* it lives in the panel instead */
 }
 
 /* ---------------------------------- hero --------------------------------- */
@@ -219,15 +318,23 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
     linear-gradient(180deg, var(--paper) 0%, #dcd6ca 55%, #b9b2a4 100%);
   /* placeholder until hero imagery is generated — see docs/ASSETS.md #1 */
 }
+/* Vector now (asset #12), so width drives the size rather than font-size —
+   the old font stack was macOS-only. */
 .hero-kanji {
   position: absolute;
   right: 2%;
   top: 8%;
-  font-size: clamp(8rem, 18vw, 16rem);
-  line-height: 1;
+  width: clamp(8rem, 18vw, 16rem);
   color: rgba(20, 19, 17, 0.07);
-  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-  user-select: none;
+  pointer-events: none;
+}
+.hero-kanji svg { width: 100%; height: auto; display: block; }
+
+.hero-seal {
+  position: absolute;
+  right: 4%;
+  bottom: 7%;
+  font-size: 1.35rem;
   pointer-events: none;
 }
 
@@ -337,6 +444,23 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
 }
 .footer-grid .label { color: rgba(253, 252, 250, 0.45); display: block; margin-bottom: 0.4rem; }
 
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 2.2rem;
+  padding-bottom: 2.5rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(253, 252, 250, 0.12);
+}
+.footer-nav a {
+  font-size: var(--text-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(253, 252, 250, 0.7);
+  transition: color 0.3s var(--ease-out);
+}
+.footer-nav a:hover { color: var(--white); }
+
 /* --------------------------- animation utilities ------------------------- */
 
 /* Elements hidden pre-reveal; motion.ts removes this. Reduced-motion users
@@ -345,3 +469,34 @@ html.motion-ok [data-anim='rise'] { opacity: 0; transform: translateY(2.5rem); }
 html.motion-ok [data-anim='fade'] { opacity: 0; }
 
 .page-stub { min-height: 45vh; display: grid; align-content: center; gap: 1.2rem; }
+
+/* World map (asset #15) */
+.world-map { width: 100%; height: auto; display: block; }
+.map-land circle { fill: rgba(20, 19, 17, 0.2); }
+.map-arc { stroke: var(--seal); stroke-width: 1; opacity: 0.4; }
+.map-marker { fill: var(--seal); }
+.map-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  fill: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+/* Process step icon (asset #16) — red ring is CSS, glyph is the SVG. */
+.process-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border: 1px solid var(--seal);
+  border-radius: 50%;
+  color: var(--seal);
+}
+.process-icon svg { width: 1.5rem; height: 1.5rem; display: block; }
+
+.error-page { min-height: 62vh; display: grid; align-content: center; }
+.error-page .error-code { color: var(--seal); display: block; margin-bottom: 1.6rem; }
+.error-page h1 { font-size: var(--text-hero); max-width: 34rem; }
+.error-page .rule { margin: 2.2rem 0 1.6rem; }
+.error-page .error-sub { color: var(--ink-soft); max-width: 34ch; margin-bottom: 2.4rem; }

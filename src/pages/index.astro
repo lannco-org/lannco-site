@@ -1,5 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
+import Kanji from '../components/Kanji.astro';
+import Seal from '../components/Seal.astro';
+import Arrow from '../components/Arrow.astro';
 
 const capabilities = [
   {
@@ -45,12 +48,13 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
             markets, and people across Asia, the Middle East, Europe and Africa.
           </p>
           <a class="cta" href="/about/" data-anim="rise">
-            Discover LANNCO <span class="cta-arrow">&#10230;</span>
+            Discover LANNCO <Arrow class="cta-arrow" />
           </a>
         </div>
         <div class="hero-visual">
           <div class="hero-img" data-parallax="0.12"></div>
-          <span class="hero-kanji" data-parallax="0.05" aria-hidden="true">嵐</span>
+          <span class="hero-kanji" data-parallax="0.05" aria-hidden="true"><Kanji /></span>
+          <Seal class="hero-seal" />
         </div>
         <ul class="hero-regions" data-anim-stagger>
           {regions.map((region) => <li>{region}</li>)}
@@ -72,7 +76,7 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
             and relationships.
           </p>
           <a class="cta" href="/capabilities/" data-anim="rise" style="margin-top: 1.2rem;">
-            View All Capabilities <span class="cta-arrow">&#10230;</span>
+            View All Capabilities <Arrow class="cta-arrow" />
           </a>
         </div>
       </div>

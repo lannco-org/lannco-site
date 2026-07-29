@@ -34,7 +34,9 @@ const {
     </main>
     <Footer />
     <script>
+      import { initNav } from '../scripts/nav';
       import { initMotion } from '../scripts/motion';
+      initNav(); // must run regardless of reduced-motion — it owns the menu
       initMotion();
     </script>
   </body>

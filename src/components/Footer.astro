@@ -1,7 +1,20 @@
 ---
 // Contact values are mockup placeholders — confirm with client (docs/COPY.md).
+// The nav row is not in the boards: it is the no-JS fallback, since below
+// 56rem the hamburger panel is the only other way to reach any page.
+const links = [
+  { href: '/about/', label: 'About' },
+  { href: '/capabilities/', label: 'Capabilities' },
+  { href: '/sectors/', label: 'Sectors' },
+  { href: '/journal/', label: 'Journal' },
+  { href: '/contact/', label: 'Contact' },
+  { href: '/private-circle/', label: 'Private Circle' },
+];
 ---
 <footer class="site-footer">
+  <nav class="container footer-nav" aria-label="Footer">
+    {links.map(({ href, label }) => <a href={href}>{label}</a>)}
+  </nav>
   <div class="container footer-grid">
     <div>
       <span class="label">Singapore</span>

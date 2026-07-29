@@ -28,6 +28,14 @@ export function initMotion(): void {
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
 
+  // The menu panel lives in nav.ts (it must work under reduced-motion, which
+  // returns above). It tells us when to stop scrolling the page behind it.
+  document.addEventListener('lannco:menu', (event) => {
+    const { open } = (event as CustomEvent<{ open: boolean }>).detail;
+    if (open) lenis.stop();
+    else lenis.start();
+  });
+
   // --- Header: hide on scroll down, reveal on scroll up ---------------------
   const header = document.querySelector<HTMLElement>('.site-header');
   if (header) {

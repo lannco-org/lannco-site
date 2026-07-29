@@ -1,0 +1,17 @@
+---
+/**
+ * Asset #13 — square 嵐 seal stamp. Border is CSS so the glyph path stays
+ * single-sourced in Kanji.astro. Scales with font-size.
+ *
+ * ASSETS.md also lists a second "column seal" variant; it is not built yet
+ * because the only board legible enough to trace it (Board A) is not in the
+ * repo — see docs/HANDOFF.md.
+ */
+import Kanji from './Kanji.astro';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+<span class:list={['seal', className]} aria-hidden="true"><Kanji /></span>

@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Arrow from '../components/Arrow.astro';
+---
+<Base title="Page Not Found — LANNCO" description="The page you are looking for is no longer here.">
+  <section class="section error-page">
+    <div class="container">
+      <span class="label error-code">404</span>
+      <h1 class="display" data-anim="split-lines">
+        This path leads<br />nowhere.
+      </h1>
+      <hr class="rule" data-anim="fade" />
+      <p class="error-sub" data-anim="rise">
+        The page you are looking for is no longer here.
+      </p>
+      <a class="cta" href="/" data-anim="rise">
+        Return Home <Arrow class="cta-arrow" />
+      </a>
+    </div>
+  </section>
+</Base>
