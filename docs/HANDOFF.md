@@ -7,7 +7,7 @@ Context for continuing the build in a fresh session. Plan/phases/decisions: [PLA
 - Project scaffolded, `npm run build` passes, all 7 routes serve 200, compiled bundle contains Lenis/ScrollTrigger/SplitText (verified via `npm run preview` + curl).
 - **Done:** design tokens (`src/styles/global.css`), base layout + nav + footer, homepage (hero + capabilities section) with first animations, stub pages for about/capabilities/sectors/journal/contact/private-circle.
 - **Everything visual is on placeholder gradients** — no real imagery exists yet (client supplied only screenshots). Generation list + priority: ASSETS.md.
-- **Git:** private repo `R4HC/lannco-site`, branch `main`, pushed and verified. **Vercel:** project `lannco-site` created and linked locally, but **not yet connected to GitHub** (needs a browser authorization — see PLAN.md decision log) and **nothing deployed**. Never commit/push/deploy without Ryan's ask.
+- **Git + deploy pipeline is live** (session 2): private repo `R4HC/lannco-site` → Vercel project `lannco-site`, pushes to `main` auto-deploy. Production builds green at `https://lannco-site.vercel.app`, gated behind Vercel Deployment Protection (SSO) so it's not public. Build config lives in `vercel.json`. **Repo-local `user.email` is set to the GitHub noreply address on purpose — don't remove it, or Vercel blocks builds.** Full details in the PLAN.md decision log. Still never commit/push without Ryan's ask.
 
 ## Conventions (established, keep them)
 
