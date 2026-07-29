@@ -56,6 +56,11 @@ Copy is in COPY.md — not repeated here. These notes cover structure only.
 3. **Phase 4 — remaining animations:** preloader (seal stamp), stat count-ups, map dot pulses + SVG arc draws (`stroke-dashoffset`), process line draw, mobile menu, page transitions (Astro view transitions).
 4. **Phases 5–8:** assets in → QA → Vercel launch → handover. Per PLAN.md.
 
+## Known defects found reading across the docs (2026-07-29, session 2)
+
+1. **The kanji is live CJK text, but ASSETS.md #12 says it must be SVG.** `.hero-kanji` (and the `favicon.svg` added this session) set `font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif` — macOS-only faces. On Windows/Android/Linux this falls back to whatever serif exists and can render 嵐 differently or as tofu, and the nav's `.seal-mark` has the same exposure. ASSETS.md anticipated exactly this ("avoids shipping a CJK font"). Fix = build asset #12/#13 as SVG and swap all three usages.
+2. **Capability 04 is named inconsistently.** COPY.md has "Opportunities" for the home/overview cards but "Alternative Assets" in the capability-detail sub-nav, and both appear across the boards. Pick one before building the detail pages, or the sub-nav won't match the card the user clicked.
+
 ## Inputs needed from Ryan (blockers, current)
 
 1. **Board A** (the full-size homepage render) into `assets/mockups/` — Boards B and C landed in session 2, Board A did not (the 12-panel board got pasted twice instead). It's the highest-fidelity reference for hero spacing/type scale, so it's a polish input, not a blocker.
