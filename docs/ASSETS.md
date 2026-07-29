@@ -35,23 +35,153 @@ Status: client has **screenshots only** (no Figma, no exports). Every hero-grade
 
 ## Generation prompts
 
-Portable across Firefly, GPT image and Midjourney. **Claude has no image model** — for Claude, the equivalent task is the vector version (`src/components/HeroArt.astro`), not raster art.
+Everything the site needs, ready to paste. **22 images across 11 entries.** Written for Higgsfield but portable — nothing here depends on a specific tool except the settings section at the end.
 
-**Aspect ratio matters and the table above is out of date on it.** #1 is described there as "vertical drama", written before the layout existed. The built hero column is *landscape-ish* — ~1.23:1 at desktop, ~1.1:1 at mobile — and the SVG slice-crops. So generate **1:1 at ≥2400px**, which crops safely to both. A 4:5 portrait will lose the summit or the ribbon.
+### First: how many versions of each?
 
-### #1 — hero mountain (master prompt)
+This is the question that decides the whole workflow, so decide it before generating anything.
 
-> Japanese sumi-e ink-wash painting of a single towering mountain peak emerging from dense mist, brushed in charcoal ink on warm ivory rice paper. One broad asymmetric summit, dark and sharply defined at the crest, dissolving downward into soft grey wash and then into bare paper — no ground line, no horizon. A single vivid vermilion silk ribbon sweeps across the lower third of the frame in one continuous curve, folding once so light catches the fold, both ends dissolving into the mist. Vast negative space: upper corners and lower third almost empty paper. Entirely monochrome except that one red accent. Visible brush texture, wet-edge ink bleed, paper grain. Serene, austere, expensive. No text, no signature, no seal, no border, no frame, no people, no buildings, no birds.
+| Route | What to make | When |
+|---|---|---|
+| **Video** *(recommended for the hero)* | **1 still + 1 short video generated from it.** No extra versions. | The motion is baked into the video, so no layers are needed. |
+| **Code-driven layers** | **2 stills**: the full image, plus the same image with the red ribbon removed. | Only if you are *not* doing a video. |
 
-Composition constraints that come from the build, not from taste — keep them:
-- **Peak centred or slightly right of centre.** The layout slice-crops the sides; a peak against an edge gets cut.
-- **Lower third must fall away to near-white.** The page hazes the image into the paper background, so a hard bottom edge or a dark base will show as a seam.
-- **The ribbon is the only saturated thing on the entire site.** One accent, deep seal red (`#a02a20`), not orange, not pink, not scarlet.
+**If you are using Higgsfield for video, ignore the two-file "plate" request from earlier — it is obsolete.** It existed only to let code animate the ribbon separately. A video does that better, and a plate that is one pixel out of alignment is worthless.
 
-Per-tool:
-- **Midjourney:** append `--ar 1:1 --style raw --s 150`. Omit `--v` so it uses your default version.
-- **Firefly:** Content type *Art*, aspect *Square*, and put this in Exclude: `text, watermark, signature, border, frame, people, buildings, birds, boats, saturated colours, orange, pink, blue sky, photorealistic, HDR`.
-- **GPT image:** paste the prompt as-is and ask for the largest square size available. It tends to add a signature or seal — if it does, say "remove all marks and signatures" rather than regenerating.
+You still need a still for every video, but **not a separate generation** — the video's first frame is the still. It becomes the `poster`, and the entire fallback for reduced-motion, no-JS, and slow connections.
+
+**Only the hero should be video.** Eight sector tiles as video would be tens of megabytes for images the user sees at 90px. Everything except #1 is a still. If you want one more, #4 (Contact) is the candidate — a slow push into a dark doorway.
+
+### Aspect ratios — read from the built layout, not guessed
+
+Several assets are used at more than one ratio, so the master has to survive every crop. These are the ratios to generate at:
+
+| # | Generate at | Used in the layout at | Why that master |
+|---|---|---|---|
+| 1 | **1:1** | ~0.9:1 desktop column, ~1.1:1 mobile | Loses only ~7% off the sides. |
+| 2 | **16:9** | 16:7 | Crops to a letterbox — keep the subject dead centre vertically. |
+| 3 | **16:9** | 16:6 | Ultra-wide crop; all content in the middle third. |
+| 4, 5 | **4:3** | 4:3 | Exact. |
+| 6–9 | **1:1** | 3:4 portrait (home + overview cards), 4:3 landscape (detail page) | Same asset at both orientations — only a square survives both. |
+| 10 (×8) | **1:1** | 1:1 | Exact. |
+| 11 (×5) | **3:2** | 16:9 featured, 4:3 cards, 1:1 list thumb | Three ratios off one file; 3:2 is the only master that keeps the subject in all three. |
+
+**Resolution:** ≥2400px on the long edge for #1–#5, ≥1600px for #6–#11. Generators cap below this — see "Getting to 2400px" below.
+
+### The three locked style suffixes
+
+Append the matching one to every prompt in its family. This is what makes 22 separately-generated images look like one commission.
+
+**A — ink-wash atmosphere** (#1–#5):
+
+> — Japanese sumi-e ink-wash painting on warm ivory rice paper, charcoal and grey washes only, one single deep seal-red accent and no other colour, soft mist dissolving into bare paper, visible brush texture and wet-edge ink bleed, vast negative space, serene and austere. No text, no signature, no seal, no border, no frame, no people.
+
+**B — studio object on ivory** (#6–#10):
+
+> — single object centred on a seamless warm ivory backdrop, one soft key light from upper left, long soft shadow falling to lower right, charcoal blacks, muted and desaturated, museum-catalogue stillness, no props, no text, no visible reflections on the backdrop, generous empty space around the object.
+
+**C — journal photography** (#11):
+
+> — moody desaturated photograph, warm ivory and charcoal palette, soft overcast light, fine grain, quiet and editorial, no people, no text, no logos, no saturated colour.
+
+---
+
+### #1 — Home hero: mountain and red ribbon ✅ delivered, wants a re-run at higher resolution
+
+> A single towering mountain peak emerging from dense mist. One broad asymmetric summit, dark and sharply defined at the crest, dissolving downward into soft grey wash and then into bare paper — no ground line, no horizon. A single vivid vermilion silk ribbon sweeps across the lower third of the frame in one continuous curve, folding once so light catches the fold, both ends dissolving into the mist. Leave the top 15% and the bottom 12% of the frame as empty paper. Keep the peak centred or slightly right of centre. Square.
+
+Those numbers are layout arithmetic: `cover` crops ~9.4% off the top and bottom, so ink outside that band is cut. Peak centred because the sides crop at narrow widths.
+
+### #2 — About: bonsai on rock in still water
+
+> A single windswept bonsai or red-maple tree growing from a dark rock that rises out of perfectly still water. A clean mirror reflection below it. The tree is small in the frame and sits dead centre; mist erases the horizon so the rock appears to float. Two or three leaves are seal red — the only colour present. Vast empty paper above and to both sides. 16:9.
+
+**Centre it vertically** — this crops to 16:7, so anything in the top or bottom eighth is lost.
+
+### #3 — Our Process: stepping stones
+
+> A line of flat dark stepping stones crossing shallow still water from lower left to upper right, receding into mist. Five or six stones, evenly spaced, the far ones dissolving into bare paper. No far bank, no horizon. Water perfectly calm with faint reflections beneath each stone. Ultra-wide composition, all content in the middle horizontal third of the frame. 16:9.
+
+The stones must read left-to-right — the section uses them to lead the eye through the five process steps.
+
+### #4 — Contact: dark doorway onto red maple
+
+> Looking outward from inside a dark stone chamber through a tall rectangular opening. The interior is almost black and fills most of the frame; through the opening, bright mist and the silhouette of a red maple branch. The red leaves are the only colour. Strong contrast between near-black interior and luminous opening. Opening positioned right of centre. 4:3.
+
+### #5 — Private Circle: red maple against a lit shoji wall
+
+> A single red maple branch in front of a dark interior wall, lit from the side by a paper shoji screen glowing softly. Deep shadow occupying the left two thirds; the branch and the glow on the right. Intimate, quiet, almost nocturnal. The maple leaves are the only colour. 4:3.
+
+### #6 — Capability 01, Strategic Advisory: stone monolith
+
+> A single rough grey granite monolith standing upright, irregular and unpolished, like a fragment of a mountain. Matte, dry, heavy. No pedestal. Square.
+
+### #7 — Capability 02, Private Introductions: red silk folds
+
+> Deep crimson silk fabric in soft folds, photographed close. Two or three broad folds catching light, the rest falling into shadow. Fabric fills the frame. This is the one asset where the red *is* the subject — deep seal red, never orange or pink. Square.
+
+*(Drop the "muted and desaturated" clause from suffix B for this one only.)*
+
+### #8 — Capability 03, Institutional Markets: black ink swirl
+
+> A swirl of glossy black liquid, like ink poured into water, caught mid-motion. Deep blacks with sharp specular highlights along the curl edges. Fills the frame. Square.
+
+### #9 — Capability 04: white marble block
+
+> A single geometric block of white marble with fine grey veining, softly lit so the edges are just distinguishable from the ivory backdrop. Very low contrast, almost monochrome, quiet. Square.
+
+### #10 — Sectors, eight objects
+
+One prompt each, **all eight with suffix B and nothing else varied** — identical backdrop, lighting and framing is the entire point. Square, ≥1600px.
+
+1. **Private Capital** — > A single rough dark grey stone, rounded and river-worn, resting on its side.
+2. **Family Offices** — > A single polished deep-red lacquer sphere, mirror-finish, one soft highlight.
+3. **Venture Capital** — > A single thin brushed-steel ring standing upright, a perfect circle seen slightly off-axis.
+4. **Real Estate** — > A small architectural model of a pale stone arch, clean geometry, sharp shadow through the opening.
+5. **Digital Assets** — > A single matte black ceramic vessel with a narrow neck, minimal and modern.
+6. **Luxury & Lifestyle** — > A single mid-century leather lounge chair in dark tan, seen three-quarter on.
+7. **Commodities** — > A single cast gold bar, brushed not shiny, resting flat.
+8. **Art & Collectibles** — > A fragment of a classical marble torso on a low plinth, weathered, one arm missing.
+
+### #11 — Journal, five thumbnails
+
+All with suffix C. **3:2, ≥1600px, subject centred** — these get cropped to three different ratios.
+
+1. **The Rise of Private Capital in the GCC** — > A minimal modern concrete-and-glass facade seen from below at an angle, strong diagonal lines, overcast sky, no signage.
+2. **Why Asia is Investing in Europe** — > A misty mountain valley at dawn, layered ridgelines fading into haze, no buildings.
+3. **Institutional Commodities Outlook** — > A dark sea stack rising from calm grey water under flat overcast light, long exposure, glassy sea.
+4. **Luxury Golf Estates: A New Asset Class** — > A manicured green landscape with soft rolling contours and a line of distant trees in low mist, early morning, empty.
+5. **Tokenization of Real Assets** — > A brutalist concrete building corner, raw board-marked concrete, hard geometry against a pale flat sky.
+
+---
+
+## Higgsfield: what to use and how to set it
+
+**Caveat worth reading:** Higgsfield ships fast and renames things. Model names below are what I know as of early 2026 and may have moved — **pick by capability, not by name**, and the capability you want is described in each case. I could not check the current roster from here: the Higgsfield connector needs an interactive login this session cannot do.
+
+### For the 21 still images
+
+- Use their **photoreal image model** (the "Soul" family) for #6–#11. Those are photographs of objects and places, and photoreal is exactly right.
+- **Do not use a photoreal model for #1–#5.** They are ink-wash *paintings*; a photoreal model fights the brief and gives you a photograph of a mountain rather than a painting of one. If Higgsfield has no painterly/illustration mode, generate #1–#5 in GPT image or Firefly instead — the delivered hero came from GPT and the style is right.
+- Turn **off** any "enhance prompt" / auto-rewrite option. It will add colour, drama and sky to prompts whose whole point is restraint.
+- Aspect ratio per the table above. Highest resolution offered.
+- Generate **4 variations of each and pick one**, rather than iterating on one. These prompts are tightly constrained, so the variance between draws is mostly what you want to choose from.
+
+### For the hero video
+
+- Mode: **image-to-video**, with the finished #1 still as the **start frame**. Not text-to-video — you already have the composition and you do not want it reinvented.
+- Model: their **camera-control / "DoP" style video family**, because it lets you specify almost no camera movement. If a start-*and*-end-frame option exists, use it with the *same image* at both ends — that is the cleanest way to get a seamless loop.
+- **Duration: 5 seconds.** Longer costs payload for motion nobody notices on a hero.
+- Camera preset: **static, or the slowest push-in available.** Explicitly avoid crash zoom, bullet time, orbit, whip pan, dolly-out — anything dramatic. This is a serene brand; the motion should be barely perceptible.
+- Motion prompt, roughly: > Static camera. Only the mist drifts slowly across the mountain's base and the red silk ribbon undulates gently. The mountain itself does not move or change shape. Extremely slow, subtle, continuous.
+- **Watch for morphing.** Ink-wash texture and rock edges are exactly what video models re-draw frame to frame; if the peak breathes or the ribbon changes shape, reject the take. This is the most likely failure and it is very visible.
+
+### Then hand me
+
+- The **video** (MP4 is fine, highest quality — I will transcode to WebM/VP9 plus an MP4 fallback and target under ~3MB).
+- Nothing else. I extract the poster frame from the video, so there is no separate still to supply.
+
+Delivered as a video, the hero becomes `<video autoplay muted loop playsinline poster="…">` with the poster shown for reduced-motion, no-JS and while the video loads. **It replaces the WebGL fog** currently in `src/scripts/mist.ts` — real generated mist beats a procedural approximation of it, and deleting the shader removes ~150 lines.
 
 ### Where delivered art lives, and why
 

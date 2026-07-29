@@ -248,6 +248,18 @@ export function initMotion(): void {
       });
     }
 
+    // --- Hero mist (WebGL2) -------------------------------------------------
+    // Loaded lazily so the shader never enters the bundle for pages without a
+    // hero, and so a WebGL failure cannot take the rest of the motion with it.
+    const mistCanvas = document.querySelector<HTMLCanvasElement>('[data-mist]');
+    if (mistCanvas) {
+      import('./mist')
+        .then(({ initMist }) => {
+          if (!initMist(mistCanvas)) mistCanvas.remove(); // no WebGL2 → still image
+        })
+        .catch(() => mistCanvas.remove());
+    }
+
     // --- Ambient drift ------------------------------------------------------
     // The reference site's hero is a live WebGL mist. This is the cheap analogue
     // for a still image: a very slow scale breath so the frame is never frozen.

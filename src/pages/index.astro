@@ -70,11 +70,11 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
                   otherwise ship a 2.3MB PNG to anything without avif/webp. */}
               fallbackFormat="jpeg"
               widths={[640, 900, 1254]}
-              sizes="(max-width: 56rem) 100vw, 58vw"
+              sizes="(max-width: 56rem) 100vw, 60vw"
               alt="Ink-wash mountain rising through mist, a red silk ribbon sweeping across its base"
               class="hero-photo"
               data-anim="drift"
-              data-parallax="0.1"
+              data-parallax="0.08"
               loading="eager"
             />
           </div>
@@ -86,6 +86,11 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
         </ul>
       </div>
     </div>
+    {/* Full-viewport WebGL2 fog, which is what the reference site runs behind
+        its hero. Purely additive over the image — if WebGL2 is missing or motion
+        is reduced, motion.ts removes it and the still image stands alone. */}
+    <canvas class="hero-mist" data-mist aria-hidden="true"></canvas>
+
     {/* Board C's mobile hero ends on a SCROLL cue; the reference site keeps the
         same label at desktop, bottom-left. */}
     <span class="scroll-cue label" data-anim="fade" aria-hidden="true">Scroll</span>

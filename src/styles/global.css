@@ -286,10 +286,20 @@ html.nav-open { overflow: hidden; }
 
 /* ---------------------------------- hero --------------------------------- */
 
+/* Full-viewport hero, matching the reference site's `component--herofulltext`,
+   which measures exactly 1.0vh with a full-viewport WebGL canvas over it.
+   `svh` not `vh`: on mobile Safari `100vh` is the *expanded* viewport, so the
+   scroll cue and region strip would sit under the browser chrome on load. */
 .hero {
   position: relative;
   overflow: clip;
-  padding-block: clamp(2.5rem, 6vh, 4.5rem) 0;
+  /* One viewport minus the announcement bar and header stacked above it — see
+     `--chrome-h` in nav.ts. The 6.5rem fallback is the desktop measurement, so
+     this is right before JS runs and exact after. */
+  min-height: calc(100svh - var(--chrome-h, 6.5rem));
+  display: grid;
+  align-content: center;
+  padding-block: clamp(1.25rem, 3vh, 2.5rem);
 }
 
 .hero-grid {
@@ -299,8 +309,29 @@ html.nav-open { overflow: hidden; }
   /* Tight row gap: the region strip sits close under the image in Board A. */
   gap: clamp(0.75rem, 1.5vh, 1.5rem) var(--gutter);
   align-items: center;
-  min-height: min(70vh, 44rem);
+  /* Fills the full-screen section. Also fixes the crop: a 1:1 source in a
+     ~0.9:1 column loses ~7% off the sides, where the old 1.22:1 box cost 19%
+     off the top and bottom and came close to clipping the summit. */
+  min-height: 100%;
 }
+
+/* The fog sits above the image but below the copy and the region strip.
+   Gated on motion-ok like the preloader: under reduced motion motion.ts returns
+   before it can initialise the canvas, so without this the element would sit in
+   the DOM forever as an inert transparent layer. */
+.hero-mist {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+html.motion-ok .hero-mist { display: block; }
+.hero-copy,
+.hero-regions,
+.scroll-cue { position: relative; z-index: 2; }
 
 .hero-copy,
 .hero-visual { grid-row: 1; }
@@ -421,12 +452,26 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
 }
 
 @media (max-width: 56rem) {
-  .hero-grid { grid-template-columns: 1fr; grid-template-rows: none; min-height: 0; }
+  /* The full-viewport hero is a desktop/tablet treatment and stops here on
+     purpose. In one column the headline runs four lines and the sub another
+     four, which is ~620px of a 720px screen; forcing 100svh squeezed the
+     mountain into a 96px strip and still overflowed at 320×700. A taller hero
+     with a real image beats a full-screen one with a sliver. */
+  .hero {
+    min-height: 0;
+    padding-block: clamp(1.5rem, 5vh, 3rem) clamp(2rem, 5vh, 3rem);
+  }
+  .hero-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    min-height: 0;
+  }
   .hero-copy, .hero-visual, .hero-regions { grid-column: 1; grid-row: auto; }
-  .hero-visual { min-height: 20rem; }
-  .hero-regions { margin-top: 2rem; }
+  .hero-visual { min-height: 17rem; }
+  .hero-copy .rule { margin: 1.8rem 0 1.4rem; }
+  .hero-regions { margin-top: 1.75rem; }
   /* In one column the cue would land on top of the region strip. */
-  .scroll-cue { position: static; display: block; margin-top: 2rem; }
+  .scroll-cue { position: static; display: block; margin-top: 1.5rem; }
 }
 
 /* ------------------------------- preloader -------------------------------- */

@@ -10,10 +10,40 @@
  */
 
 const MENU_EVENT = 'lannco:menu';
+/** Fired when the chrome above the hero changes height. */
+const CHROME_EVENT = 'lannco:chrome';
 
 export function initNav(): void {
   initMenu();
   initAnnounce();
+  initChromeHeight();
+}
+
+/**
+ * Publishes the height of everything stacked above the hero as `--chrome-h`.
+ *
+ * The hero wants to be exactly one viewport tall, but the announcement bar and
+ * the header sit above it *in flow*, so a plain `100svh` pushed its bottom
+ * 105px (desktop) to 232px (mobile, where the announcement wraps to two lines)
+ * below the fold and cut off the scroll cue and the region strip.
+ *
+ * Lives here rather than in motion.ts on purpose: motion.ts returns early under
+ * reduced motion, and the hero still has to be the right height for those
+ * visitors. Re-measured on resize and after the announcement is dismissed.
+ */
+function initChromeHeight(): void {
+  const announce = document.querySelector<HTMLElement>('[data-announce]');
+  const header = document.querySelector<HTMLElement>('.site-header');
+
+  const sync = () => {
+    const h = (announce && !announce.hidden ? announce.offsetHeight : 0)
+      + (header ? header.offsetHeight : 0);
+    document.documentElement.style.setProperty('--chrome-h', `${h}px`);
+  };
+
+  sync();
+  window.addEventListener('resize', sync);
+  document.addEventListener(CHROME_EVENT, sync);
 }
 
 function initMenu(): void {
@@ -67,11 +97,14 @@ function initAnnounce(): void {
 
   if (sessionStorage.getItem('lannco:announce-dismissed') === '1') {
     bar.hidden = true;
+    document.dispatchEvent(new CustomEvent(CHROME_EVENT));
     return;
   }
 
   close.addEventListener('click', () => {
     bar.hidden = true;
     sessionStorage.setItem('lannco:announce-dismissed', '1');
+    // The hero is sized against the chrome above it — tell it to re-measure.
+    document.dispatchEvent(new CustomEvent(CHROME_EVENT));
   });
 }
