@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import SectionHead from '../components/SectionHead.astro';
-import Placeholder from '../components/Placeholder.astro';
+import Art from '../components/Art.astro';
 import { sectors } from '../data/site';
 
 // Board C's 2x4 grid, not Board B's single row of 8 (docs/HANDOFF.md).
@@ -22,7 +22,7 @@ import { sectors } from '../data/site';
       <ul class="sector-grid" data-anim-stagger>
         {sectors.map(({ label, asset }) => (
           <li class="sector-tile">
-            <Placeholder asset={asset} variant="ivory" ratio="1 / 1" />
+            <Art asset={asset} variant="ivory" ratio="1 / 1" sizes="(max-width: 56rem) 50vw, 25vw" />
             <span class="sector-label">{label}</span>
           </li>
         ))}

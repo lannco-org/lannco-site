@@ -1,0 +1,45 @@
+---
+import { Picture } from 'astro:assets';
+import Placeholder from './Placeholder.astro';
+import { art } from '../data/art';
+
+interface Props {
+  asset: string;
+  variant?: 'stone' | 'silk' | 'ink' | 'marble' | 'mist' | 'dark' | 'ivory';
+  class?: string;
+  ratio?: string;
+  parallax?: string;
+  sizes?: string;
+  alt?: string;
+}
+
+const {
+  asset,
+  variant = 'mist',
+  class: className,
+  ratio,
+  parallax,
+  sizes = '100vw',
+  alt,
+} = Astro.props;
+const item = art[asset];
+---
+
+{item ? (
+  <div
+    class:list={['art', className]}
+    data-parallax={parallax}
+    style={ratio ? `aspect-ratio: ${ratio};` : undefined}
+  >
+    <Picture
+      src={item.image}
+      alt={alt ?? item.alt}
+      widths={[480, 768, 1200, 1600]}
+      sizes={sizes}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpeg"
+    />
+  </div>
+) : (
+  <Placeholder asset={asset} variant={variant} class={className} ratio={ratio} parallax={parallax} />
+)}

@@ -1,8 +1,8 @@
 # LANNCO — Asset Audit
 
-Status: client has **screenshots only** (no Figma, no exports). Every hero-grade image below must be regenerated at production resolution (≥2400px wide for heroes, ≥1200px for cards) in a consistent style before build Phase 2 completes.
+Status: all listed production imagery is delivered and wired from the board-approved Higgsfield set. Future generations must match the final photoreal direction below.
 
-**Style anchor:** Japanese ink-wash (sumi-e) meets luxury-materials photography. Ivory paper ground, charcoal/ink blacks, one deep seal-red accent. Soft mist, hard subject.
+**Style anchor:** photoreal luxury-materials photography. Flat warm ivory ground, charcoal/ink blacks, one deep seal-red accent, crisp granite and restrained mist. No painted-paper texture.
 
 ## Photographic / generated imagery
 
@@ -10,14 +10,14 @@ Status: client has **screenshots only** (no Figma, no exports). Every hero-grade
 |---|-------|---------|-------|
 | 1 | Mountain in mist with red silk ribbon wrapping the peak | Home hero | ◐ **Delivered** 2026-07-29 (GPT, from the prompt below) → `src/assets/hero-mountain.png`, 1254×1254. Composition and art direction are right. **Needs a ≥2400px version before launch** — see the resolution note below. Superseded the SVG stand-in `HeroArt.astro` (recoverable at commit `ee6905a`). |
 | 2 | Bonsai/red-maple tree on rock in still water | About | Reflection, heavy negative space |
-| 3 | Stepping stones through misty water | Our Process | Horizontal, leads the eye left→right |
-| 4 | Dark cave/stone interior opening onto red maple | Contact / Private Circle | Doorway metaphor, mostly black |
-| 5 | Red maple branch against dark interior wall + shoji light | Private Circle | Alt to #4 |
+| 3 | Layered ridgelines dissolving into mist | Our Process | Horizontal, monochrome, no red |
+| 4 | Red maple arrangement in a dark stone interior | Contact | Board C's contact scene |
+| 5 | Slatted doorway opening onto warm light and maple branches | Private Circle | Board C's private-circle scene |
 | 6 | Rough grey stone monolith on ivory | Capability card 01 + Strategic Advisory hero | Studio-lit object series begins here |
 | 7 | Red silk/velvet fabric folds, macro | Capability card 02 | |
 | 8 | Black liquid-marble/ink swirl | Capability card 03 | |
 | 9 | White marble geometric block | Capability card 04 | |
-| 10 | Sector objects ×8: stone, red lacquer sphere, wire ring sculpture, stone arch/interior, designer chair, gold bar, black vessel, classical torso | Sectors grid | One object per sector, same ivory backdrop and lighting |
+| 10 | Sector objects ×8: dark stone, red lacquer sphere, pale portal, gold bar, pale niche, chrome torus, charcoal armchair, tan sandstone sculpture | Sectors grid | One object per sector, same ivory backdrop and lighting |
 | 11 | Journal thumbnails ×5: dark sea stack, misty mountain valley, brutalist building, golf-estate landscape, abstract architecture | Journal | Moodier, photographic |
 
 ## Vector / drawn assets (I build these — no generation needed)
@@ -58,7 +58,7 @@ Several assets are used at more than one ratio, so the master has to survive eve
 
 | # | Generate at | Used in the layout at | Why that master |
 |---|---|---|---|
-| 1 | **1:1** | ~0.9:1 desktop column, ~1.1:1 mobile | Loses only ~7% off the sides. |
+| 1 | **16:9 desktop + portrait mobile master** | Full-bleed hero | Separately art-directed masters preserve the copy-safe area at each breakpoint. |
 | 2 | **16:9** | 16:7 | Crops to a letterbox — keep the subject dead centre vertically. |
 | 3 | **16:9** | 16:6 | Ultra-wide crop; all content in the middle third. |
 | 4, 5 | **4:3** | 4:3 | Exact. |
@@ -66,15 +66,15 @@ Several assets are used at more than one ratio, so the master has to survive eve
 | 10 (×8) | **1:1** | 1:1 | Exact. |
 | 11 (×5) | **3:2** | 16:9 featured, 4:3 cards, 1:1 list thumb | Three ratios off one file; 3:2 is the only master that keeps the subject in all three. |
 
-**Resolution:** ≥2400px on the long edge for #1–#5, ≥1600px for #6–#11. Generators cap below this — see "Getting to 2400px" below.
+**Resolution:** ≥2400px on the long edge for #1–#5, ≥1600px for #6–#11. Current Higgsfield models support native high-resolution output.
 
 ### The three locked style suffixes
 
 Append the matching one to every prompt in its family. This is what makes 22 separately-generated images look like one commission.
 
-**A — ink-wash atmosphere** (#1–#5):
+**A — atmospheric photography** (#1–#5):
 
-> — Japanese sumi-e ink-wash painting on warm ivory rice paper, charcoal and grey washes only, one single deep seal-red accent and no other colour, soft mist dissolving into bare paper, visible brush texture and wet-edge ink bleed, vast negative space, serene and austere. No text, no signature, no seal, no border, no frame, no people.
+> — photoreal luxury editorial image on a flat warm ivory ground, charcoal and grey only with one single deep seal-red accent, crisp natural materials, soft atmospheric mist, generous negative space, serene and austere. No text, no signature, no seal, no border, no frame, no people.
 
 **B — studio object on ivory** (#6–#10):
 
@@ -98,19 +98,19 @@ Those numbers are layout arithmetic: `cover` crops ~9.4% off the top and bottom,
 
 **Centre it vertically** — this crops to 16:7, so anything in the top or bottom eighth is lost.
 
-### #3 — Our Process: stepping stones
+### #3 — Our Process: layered ridgelines
 
-> A line of flat dark stepping stones crossing shallow still water from lower left to upper right, receding into mist. Five or six stones, evenly spaced, the far ones dissolving into bare paper. No far bank, no horizon. Water perfectly calm with faint reflections beneath each stone. Ultra-wide composition, all content in the middle horizontal third of the frame. 16:9.
+> Layered charcoal mountain ridges receding through pale mist. No horizon, no red, no people. Ultra-wide composition with the forms held through the middle horizontal third. 16:9.
 
-The stones must read left-to-right — the section uses them to lead the eye through the five process steps.
+The ridges should create a calm horizontal progression beneath the five process steps.
 
-### #4 — Contact: dark doorway onto red maple
+### #4 — Contact: red maple in a dark stone interior
 
-> Looking outward from inside a dark stone chamber through a tall rectangular opening. The interior is almost black and fills most of the frame; through the opening, bright mist and the silhouette of a red maple branch. The red leaves are the only colour. Strong contrast between near-black interior and luminous opening. Opening positioned right of centre. 4:3.
+> A red maple arrangement in a dark stone interior, with the maple as the only colour. Strong contrast between near-black stone and the red leaves. 4:3.
 
-### #5 — Private Circle: red maple against a lit shoji wall
+### #5 — Private Circle: slatted doorway with warm light and maple branches
 
-> A single red maple branch in front of a dark interior wall, lit from the side by a paper shoji screen glowing softly. Deep shadow occupying the left two thirds; the branch and the glow on the right. Intimate, quiet, almost nocturnal. The maple leaves are the only colour. 4:3.
+> A dark slatted doorway opening onto warm light and maple branches. Deep shadow occupies most of the image, with warm light and red maple beyond the opening. Intimate, quiet and almost nocturnal. 4:3.
 
 ### #6 — Capability 01, Strategic Advisory: stone monolith
 

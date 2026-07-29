@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Arrow from '../../components/Arrow.astro';
-import Placeholder from '../../components/Placeholder.astro';
+import Art from '../../components/Art.astro';
 import { capabilities } from '../../data/capabilities';
 
 export function getStaticPaths() {
@@ -42,7 +42,7 @@ const { num, title, sub, texture, asset, pillars, pillarsPending } = capability;
         </a>
       </div>
       <div class="lead-visual">
-        <Placeholder asset={asset} variant={texture} ratio="4 / 3" />
+        <Art asset={asset} variant={texture} ratio="4 / 3" sizes="(max-width: 56rem) 100vw, 50vw" />
       </div>
     </div>
 

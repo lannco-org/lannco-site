@@ -293,19 +293,16 @@ html.nav-open { overflow: hidden; }
 .hero {
   --hero-progress: 0;
   position: relative;
-  /* The actual screen is the sticky .hero-stage. The extra scroll distance is
-     intentional: it turns one art-directed frame into a scroll-controlled
-     camera move before the visitor reaches the next chapter. */
   overflow: clip;
   /* One viewport minus the announcement bar and header stacked above it — see
      `--chrome-h` in nav.ts. The 6.5rem fallback is the desktop measurement, so
      this is right before JS runs and exact after. */
-  min-height: calc((100svh - var(--chrome-h, 6.5rem)) * 1.7);
+  min-height: calc(100svh - var(--chrome-h, 6.5rem));
 }
 
 .hero-stage {
-  position: sticky;
-  top: 0;
+  position: relative;
+  height: calc(100svh - var(--chrome-h, 6.5rem));
   min-height: calc(100svh - var(--chrome-h, 6.5rem));
   display: grid;
   align-content: center;
@@ -356,7 +353,14 @@ html.motion-ok .hero-mist { display: block; }
    overflow:clip line masks then sheared the words. Rem keeps the two in the
    same unit space, and the line breaks in the markup are explicit anyway. */
 .hero-copy { max-width: 34rem; }
-.hero-copy h1 { font-size: var(--text-hero); }
+.hero-copy h1 {
+  font-size: var(--text-hero);
+  /* SplitText masks each line during the intro. The global display leading is
+     intentionally tight, but it leaves a descender such as the “g” in
+     “Connecting” touching the mask edge. This local breathing room preserves
+     the editorial scale without clipping the type. */
+  line-height: 1.1;
+}
 .hero-copy .rule { margin: 2.2rem 0 1.6rem; }
 .hero-sub { color: var(--ink-soft); max-width: 34ch; margin-bottom: 2.4rem; }
 
@@ -440,11 +444,17 @@ html.motion-ok .hero-mist { display: block; }
      empty space and left a hard boundary on the picture itself — measured as a
      10-value RGB step against --paper. With the box matched to the content, mask
      percentages and visible edges finally coincide. */
-  inset: auto auto 0 50%;
-  translate: -50% 0;
-  width: auto;
+  inset: 0;
+  translate: none;
+  width: 100%;
   height: 100%;
-  max-width: none;
+  max-width: 100%;
+  object-fit: cover;
+  /* A widescreen hero is wider than the 16:9 master, so `cover` removes some
+     vertical image. Bias the focal window towards the open sky: the summit
+     remains fully visible through the whole film, including its close-in end
+     frames. */
+  object-position: center 18%;
   /* Only the bottom edge is feathered now. The old build faded all four because
      the image was a discrete rectangle whose ground (#efe8de..#f4eee4) didn't
      match --paper (#f5f2ec) and read as a visible box. Full-bleed removes three
@@ -457,14 +467,6 @@ html.motion-ok .hero-mist { display: block; }
      against the page — the generated ground is #efe8de..#f4eee4 against --paper
      #f5f2ec, close but not equal. Feathering dissolves the boundary rather than
      trying to colour-match a gradient. */
-  mask-image:
-    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 4%, #000 88%, transparent 100%);
-  mask-composite: intersect;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 4%, #000 88%, transparent 100%);
-  -webkit-mask-composite: source-in;
   transform-origin: 57% 47%;
   will-change: transform, filter;
 }
@@ -473,13 +475,13 @@ html.motion-ok .hero-mist { display: block; }
    the still as a first-class fallback for no-JS and reduced-motion visitors. */
 .hero-film {
   position: absolute;
-  inset: auto auto 0 50%;
-  translate: -50% 0;
-  width: auto;
+  inset: 0;
+  translate: none;
+  width: 100%;
   height: 100%;
-  max-width: none;
-  object-fit: contain;
-  object-position: center;
+  max-width: 100%;
+  object-fit: cover;
+  object-position: center 18%;
   opacity: 0;
   transition: opacity 420ms var(--ease-out);
   pointer-events: none;
@@ -520,15 +522,21 @@ html.motion-ok .hero-mist { display: block; }
   display: flex;
   justify-content: space-between;
   gap: clamp(1.5rem, 4vw, 4rem);
-  /* Labels sit above the hairline, active marker on the line beneath them. */
-  padding-block: 0 1.4rem;
+  /* A restrained translucent-paper rail keeps the labels readable over both
+     pale cloud and dark rock without turning the film into a boxed layout. */
+  padding: 0.7rem clamp(0.8rem, 1.4vw, 1.2rem) 1.4rem;
   border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  box-shadow: 0 0.8rem 2rem rgba(20, 19, 17, 0.07);
+  backdrop-filter: blur(0.8rem) saturate(88%);
+  -webkit-backdrop-filter: blur(0.8rem) saturate(88%);
 }
 .hero-regions li {
   font-size: var(--text-label);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   position: relative;
+  color: color-mix(in srgb, var(--ink) 88%, var(--paper));
 }
 .hero-regions li::before {
   content: '';
@@ -582,7 +590,7 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue { animation: none; opacity: 0.55; }
   .hero { min-height: 0; }
-  .hero-stage { position: relative; min-height: calc(100svh - var(--chrome-h, 6.5rem)); }
+  .hero-stage { min-height: calc(100svh - var(--chrome-h, 6.5rem)); }
   .hero-progress { display: none; }
   .hero-film { display: none; }
 }
@@ -594,9 +602,10 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
      mountain into a 96px strip and still overflowed at 320×700. A taller hero
      with a real image beats a full-screen one with a sliver. */
   .hero {
-    min-height: calc((100svh - var(--chrome-h, 9rem)) + 13rem);
+    min-height: max(calc(100svh - var(--chrome-h, 9rem)), 43rem);
   }
   .hero-stage {
+    height: auto;
     min-height: max(calc(100svh - var(--chrome-h, 9rem)), 43rem);
     padding-block: clamp(1.5rem, 5vh, 3rem) clamp(2rem, 5vh, 3rem);
   }
@@ -655,12 +664,6 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
     -webkit-mask-composite: source-over;
   }
   .hero-film {
-    inset: 0;
-    translate: none;
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    object-fit: cover;
     object-position: center 48%;
   }
   /* Kept, unlike the earlier attempt that dropped it: the art's top edge now
@@ -760,13 +763,8 @@ html.motion-ok .preloader { display: grid; }
   inset: 0;
   z-index: -1;
   transition: transform 0.9s var(--ease-out);
-  /* placeholder textures until docs/ASSETS.md #6–9 are generated */
 }
 .cap-card:hover .card-media { transform: scale(1.05); }
-.cap-card[data-texture='stone'] .card-media { background: linear-gradient(160deg, #4c4a45, #23211e); }
-.cap-card[data-texture='silk'] .card-media { background: linear-gradient(160deg, #8e2118, #4a0f0a); }
-.cap-card[data-texture='ink'] .card-media { background: linear-gradient(160deg, #2a2a2c, #060607); }
-.cap-card[data-texture='marble'] .card-media { background: linear-gradient(160deg, #e8e4db, #b8b2a5); color: var(--ink); }
 .cap-card[data-texture='marble'] { color: var(--ink); }
 
 .cap-card h3 { font-family: var(--font-display); font-size: var(--text-h3); font-weight: 500; line-height: 1.15; }
@@ -837,8 +835,8 @@ html.motion-ok .preloader { display: grid; }
 
 .cap-item { display: grid; gap: 0.7rem; }
 .cap-item-media { overflow: clip; }
-.cap-item-media .ph { transition: transform 0.9s var(--ease-out); }
-.cap-item:hover .cap-item-media .ph { transform: scale(1.04); }
+.cap-item-media .art { transition: transform 0.9s var(--ease-out); }
+.cap-item:hover .cap-item-media .art { transform: scale(1.04); }
 .cap-item-num { color: var(--seal); margin-top: 0.5rem; }
 .cap-item h2 { font-size: var(--text-h3); line-height: 1.15; }
 .cap-item p { color: var(--ink-soft); font-size: 0.9rem; }
@@ -1009,10 +1007,10 @@ html.motion-ok .preloader { display: grid; }
 /* Clips the image so it can scale on hover — and gives Phase 4's journal
    parallax a container to translate inside. */
 .journal-media { overflow: hidden; }
-.journal-media .ph { transition: transform 0.8s var(--ease-out); }
-.journal-featured:hover .ph,
-.journal-card:hover .ph,
-.article-row:hover .ph { transform: scale(1.04); }
+.journal-media .art { transition: transform 0.8s var(--ease-out); }
+.journal-featured:hover .art,
+.journal-card:hover .art,
+.article-row:hover .art { transform: scale(1.04); }
 .journal-featured:hover h2,
 .journal-card:hover h3,
 .article-row:hover .article-row-title { color: var(--seal); }
@@ -1181,7 +1179,9 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 .page-stub { min-height: 45vh; display: grid; align-content: center; gap: 1.2rem; }
 
 /* --------------------------- imagery placeholders ------------------------ */
-/* Gradients standing in for docs/ASSETS.md imagery. Swap in Phase 5. */
+/* Fallback gradients remain for an unregistered asset key. */
+.art { width: 100%; height: 100%; overflow: hidden; }
+.art picture, .art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ph { width: 100%; height: 100%; }
 .ph[data-variant='stone']  { background: linear-gradient(160deg, #4c4a45, #23211e); }
 .ph[data-variant='silk']   { background: linear-gradient(160deg, #8e2118, #4a0f0a); }

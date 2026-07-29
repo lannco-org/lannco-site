@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Placeholder from '../../components/Placeholder.astro';
+import Art from '../../components/Art.astro';
 import { getArticles, articleHref, formatDate } from '../../data/journal';
 
 // Board C's third mobile board: an "All Articles" list view — rows of title +
@@ -28,7 +28,7 @@ const articles = await getArticles();
                 <span class="journal-date">{formatDate(article.data.date)}</span>
               </span>
               <span class="journal-media article-row-thumb">
-                <Placeholder asset={article.data.asset} variant="dark" ratio="1 / 1" />
+                <Art asset={article.data.asset} variant="dark" ratio="1 / 1" sizes="10rem" />
               </span>
             </a>
           </li>

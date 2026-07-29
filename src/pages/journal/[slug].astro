@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Arrow from '../../components/Arrow.astro';
-import Placeholder from '../../components/Placeholder.astro';
+import Art from '../../components/Art.astro';
 import { getArticles, articleHref, formatDate } from '../../data/journal';
 
 export async function getStaticPaths() {
@@ -40,7 +40,7 @@ const { Content } = await render(article);
 
     <div class="container">
       <div class="journal-media article-hero" data-anim="fade">
-        <Placeholder asset={asset} variant="dark" ratio="16 / 9" />
+        <Art asset={asset} variant="dark" ratio="16 / 9" sizes="100vw" />
       </div>
     </div>
 

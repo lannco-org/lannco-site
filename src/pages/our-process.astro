@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import ProcessIcon from '../components/ProcessIcon.astro';
-import Placeholder from '../components/Placeholder.astro';
+import Art from '../components/Art.astro';
 import { processSteps } from '../data/site';
 
 // The hairline connecting the five steps is a CSS pseudo-element for now; Phase 4
@@ -35,10 +35,11 @@ import { processSteps } from '../data/site';
     </div>
 
     <div class="container process-image">
-      <Placeholder
+      <Art
         asset="#3 stepping stones through misty water"
         variant="mist"
         ratio="16 / 6"
+        sizes="100vw"
       />
     </div>
   </section>

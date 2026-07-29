@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import Arrow from '../../components/Arrow.astro';
-import Placeholder from '../../components/Placeholder.astro';
+import Art from '../../components/Art.astro';
 import { capabilities } from '../../data/capabilities';
 
 // Card anatomy follows Board C — image on top, title/blurb/arrow below — with
@@ -27,7 +27,12 @@ import { capabilities } from '../../data/capabilities';
         {capabilities.map(({ slug, num, title, blurb, texture, asset }) => (
           <a class="cap-item" href={`/capabilities/${slug}/`}>
             <div class="cap-item-media">
-              <Placeholder asset={asset} variant={texture} ratio="3 / 4" />
+              <Art
+                asset={asset}
+                variant={texture}
+                ratio="3 / 4"
+                sizes="(max-width: 36rem) 100vw, (max-width: 64rem) 50vw, 25vw"
+              />
             </div>
             <span class="cap-item-num label">{num}</span>
             <h2 class="display">{title}</h2>

@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Arrow from '../components/Arrow.astro';
 import Seal from '../components/Seal.astro';
-import Placeholder from '../components/Placeholder.astro';
+import Art from '../components/Art.astro';
 
 // Heading uses Board C's "Relationships Begin with Conversations" (COPY.md v2).
 // Still a mailto, not a form — Phase 6 wires Resend/Formspree, which needs the
@@ -23,10 +23,11 @@ import Placeholder from '../components/Placeholder.astro';
         </a>
       </div>
       <div class="lead-visual">
-        <Placeholder
+        <Art
           asset="#4 dark cave/stone interior opening onto red maple"
           variant="dark"
           ratio="4 / 3"
+          sizes="(max-width: 56rem) 100vw, 50vw"
         />
         <Seal class="visual-seal" />
       </div>

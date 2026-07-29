@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Arrow from '../components/Arrow.astro';
 import Kanji from '../components/Kanji.astro';
-import Placeholder from '../components/Placeholder.astro';
+import Art from '../components/Art.astro';
 import { timeline } from '../data/site';
 
 // Board B carries the timeline; Board C drops it for a second body paragraph.
@@ -46,10 +46,11 @@ import { timeline } from '../data/site';
       </div>
     </div>
     <div class="container about-image">
-      <Placeholder
+      <Art
         asset="#2 bonsai/red-maple tree on rock in still water"
         variant="mist"
         ratio="16 / 7"
+        sizes="100vw"
       />
     </div>
   </section>

@@ -260,87 +260,62 @@ export function initMotion(): void {
         .catch(() => mistCanvas.remove());
     }
 
-    // --- Scroll cinema ------------------------------------------------------
-    // The hero is a sticky, full-screen art frame with a deliberately generous
-    // scroll runway. Rather than autoplaying a decorative loop, scroll becomes
-    // the camera: the peak advances, the atmosphere deepens and the typographic
-    // layer recedes. `data-hero-progress` gives the generated-film controller a normalized frame
-    // position without changing the page choreography.
+    // --- Hero cinema --------------------------------------------------------
+    // The generated film owns the moving image. Seeking an inter-frame encoded
+    // MP4 on every scroll tick causes visible jumps, so scroll only adds a
+    // restrained composited camera drift around the continuously playing film.
     const hero = document.querySelector<HTMLElement>('[data-hero-cinema]');
     const heroStage = hero?.querySelector<HTMLElement>('.hero-stage');
+    const heroMedia = hero?.querySelector<HTMLElement>('.hero-media');
     const heroPhoto = hero?.querySelector<HTMLElement>('.hero-photo');
     const heroCopy = hero?.querySelector<HTMLElement>('.hero-copy');
     const heroVisual = hero?.querySelector<HTMLElement>('.hero-visual');
     const heroRegions = hero?.querySelector<HTMLElement>('.hero-regions');
     const heroFilm = hero?.querySelector<HTMLVideoElement>('[data-hero-film]');
 
-    if (hero && heroStage && heroPhoto) {
-      let filmDuration = 0;
-      let lastFilmTime = -1;
-      const seekFilm = (progress: number) => {
-        if (!heroFilm || !filmDuration) return;
-        // Avoid a seek on every Lenis tick while retaining the sensation that
-        // each scroll increment owns a precise frame of the film.
-        const nextTime = Math.min(filmDuration - 0.04, Math.max(0, progress * (filmDuration - 0.04)));
-        if (Math.abs(nextTime - lastFilmTime) < 0.018) return;
-        heroFilm.currentTime = nextTime;
-        lastFilmTime = nextTime;
-      };
-
+    if (hero && heroStage && heroMedia && heroPhoto) {
       if (heroFilm) {
-        const setFilmDuration = () => {
-          filmDuration = Number.isFinite(heroFilm.duration) ? heroFilm.duration : 0;
-        };
         const revealFilm = () => {
-          setFilmDuration();
-          if (!filmDuration) return;
           heroFilm.classList.add('is-ready');
-          seekFilm(Number(hero.dataset.heroProgress ?? '0'));
+          heroFilm.play().catch(() => undefined);
         };
-        heroFilm.addEventListener('loadedmetadata', setFilmDuration, { once: true });
         heroFilm.addEventListener('loadeddata', revealFilm, { once: true });
-        if (heroFilm.readyState >= HTMLMediaElement.HAVE_METADATA) setFilmDuration();
         if (heroFilm.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) revealFilm();
       }
 
       const cinema = gsap.timeline({
         scrollTrigger: {
-          trigger: hero,
+          trigger: heroStage,
           start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.85,
-          onUpdate: (self) => {
-            hero.dataset.heroProgress = self.progress.toFixed(3);
-            seekFilm(self.progress);
-          },
+          end: 'bottom top',
+          scrub: 0.55,
         },
       });
 
       cinema
         .to(heroStage, { '--hero-progress': 1, ease: 'none', duration: 1 }, 0)
-        .to(heroPhoto, {
-          scale: 1.14,
-          yPercent: -5,
-          filter: 'contrast(1.07) saturate(1.08)',
+        .to(heroMedia, {
+          // Keep the summit protected in a wide full-screen crop. The generated
+          // film already provides the movement; this is just a quiet camera
+          // settle as the visitor leaves the hero.
+          scale: 1.025,
+          yPercent: 1.2,
           ease: 'none',
           duration: 1,
         }, 0)
         .to(heroCopy, {
-          yPercent: -16,
-          scale: 0.97,
-          opacity: 0.42,
+          yPercent: -8,
+          opacity: 0.72,
           ease: 'none',
           duration: 1,
         }, 0)
         .to(heroVisual, {
-          yPercent: -10,
-          scale: 1.07,
+          yPercent: -5,
           ease: 'none',
           duration: 1,
         }, 0)
         .to(heroRegions, {
-          xPercent: -7,
-          yPercent: 18,
+          yPercent: 8,
           ease: 'none',
           duration: 1,
         }, 0);

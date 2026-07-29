@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Kanji from '../components/Kanji.astro';
 import Seal from '../components/Seal.astro';
 import Arrow from '../components/Arrow.astro';
+import Art from '../components/Art.astro';
 import WorldMap from '../components/WorldMap.astro';
 import { getImage } from 'astro:assets';
 import heroDesktop from '../assets/hero-desktop.png';
@@ -47,24 +48,28 @@ const capabilities = [
     num: '01',
     title: 'Strategic Advisory',
     texture: 'stone',
+    asset: '#6 rough grey stone monolith on ivory',
     blurb: 'Providing clarity and strategy for cross-border expansion, market entry, and capital strategy.',
   },
   {
     num: '02',
     title: 'Private Introductions',
     texture: 'silk',
+    asset: '#7 red silk/velvet fabric folds, macro',
     blurb: 'Creating trusted introductions between investors, founders, family offices and strategic partners.',
   },
   {
     num: '03',
     title: 'Institutional Markets',
     texture: 'ink',
+    asset: '#8 black liquid-marble/ink swirl',
     blurb: 'Access to institutional networks in commodities, energy, and digital assets.',
   },
   {
     num: '04',
     title: 'Opportunities',
     texture: 'marble',
+    asset: '#9 white marble geometric block',
     blurb: 'Curated access to private markets, real estate, and luxury alternative assets.',
   },
 ];
@@ -108,6 +113,8 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
         <video
           class="hero-film"
           data-hero-film
+          autoplay
+          loop
           muted
           playsinline
           preload="auto"
@@ -178,9 +185,16 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
         </div>
       </div>
       <div class="card-grid" data-anim-stagger>
-        {capabilities.map(({ num, title, texture, blurb }) => (
+        {capabilities.map(({ num, title, texture, asset, blurb }) => (
           <a class="cap-card" href="/capabilities/" data-texture={texture} aria-label={`${title} — ${blurb}`}>
-            <div class="card-media"></div>
+            <div class="card-media">
+              <Art
+                asset={asset}
+                variant={texture}
+                ratio="3 / 4"
+                sizes="(max-width: 36rem) 100vw, (max-width: 64rem) 50vw, 25vw"
+              />
+            </div>
             <h3>{title}</h3>
             <span class="card-num">{num}</span>
           </a>
