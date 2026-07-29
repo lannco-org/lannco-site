@@ -1,0 +1,25 @@
+---
+const links = [
+  { href: '/about/', label: 'About' },
+  { href: '/capabilities/', label: 'Capabilities' },
+  { href: '/sectors/', label: 'Sectors' },
+  { href: '/journal/', label: 'Journal' },
+  { href: '/contact/', label: 'Contact' },
+];
+const { pathname } = Astro.url;
+---
+<div class="announce">
+  LANNCO Journal: The Rise of Private Capital in the GCC
+  <a href="/journal/">Read Now &rarr;</a>
+</div>
+<header class="site-header">
+  <div class="container nav">
+    <a class="nav-brand" href="/">LANNCO <span class="seal-mark">嵐</span></a>
+    <nav class="nav-links" aria-label="Primary">
+      {links.map(({ href, label }) => (
+        <a href={href} aria-current={pathname === href ? 'page' : undefined}>{label}</a>
+      ))}
+    </nav>
+    <a class="nav-private" href="/private-circle/">Private Circle</a>
+  </div>
+</header>

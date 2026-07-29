@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+
+const capabilities = [
+  {
+    num: '01',
+    title: 'Strategic Advisory',
+    texture: 'stone',
+    blurb: 'Providing clarity and strategy for cross-border expansion, market entry, and capital strategy.',
+  },
+  {
+    num: '02',
+    title: 'Private Introductions',
+    texture: 'silk',
+    blurb: 'Creating trusted introductions between investors, founders, family offices and strategic partners.',
+  },
+  {
+    num: '03',
+    title: 'Institutional Markets',
+    texture: 'ink',
+    blurb: 'Access to institutional networks in commodities, energy, and digital assets.',
+  },
+  {
+    num: '04',
+    title: 'Opportunities',
+    texture: 'marble',
+    blurb: 'Curated access to private markets, real estate, and luxury alternative assets.',
+  },
+];
+const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
+---
+<Base>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="display" data-anim="split-lines">
+            Connecting Capital. Markets. <span class="accent">People.</span>
+          </h1>
+          <hr class="rule" data-anim="fade" />
+          <p class="hero-sub" data-anim="rise">
+            An independent advisory and strategic introductions platform, connecting capital,
+            markets, and people across Asia, the Middle East, Europe and Africa.
+          </p>
+          <a class="cta" href="/about/" data-anim="rise">
+            Discover LANNCO <span class="cta-arrow">&#10230;</span>
+          </a>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-img" data-parallax="0.12"></div>
+          <span class="hero-kanji" data-parallax="0.05" aria-hidden="true">嵐</span>
+        </div>
+      </div>
+      <ul class="hero-regions" data-anim-stagger>
+        {regions.map((region) => <li>{region}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="display" data-anim="split-lines">Our Capabilities</h2>
+          <hr class="rule" data-anim="fade" />
+        </div>
+        <div>
+          <p class="section-intro" data-anim="rise">
+            We operate with discretion, integrity, and a deep understanding of cultures, markets,
+            and relationships.
+          </p>
+          <a class="cta" href="/capabilities/" data-anim="rise" style="margin-top: 1.2rem;">
+            View All Capabilities <span class="cta-arrow">&#10230;</span>
+          </a>
+        </div>
+      </div>
+      <div class="card-grid" data-anim-stagger>
+        {capabilities.map(({ num, title, texture, blurb }) => (
+          <a class="cap-card" href="/capabilities/" data-texture={texture} aria-label={`${title} — ${blurb}`}>
+            <div class="card-media"></div>
+            <h3>{title}</h3>
+            <span class="card-num">{num}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
