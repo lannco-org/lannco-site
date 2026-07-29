@@ -1,6 +1,6 @@
 # LANNCO site (client project)
 
-Astro 5 + GSAP 3.13 (ScrollTrigger/SplitText) + Lenis. Static output, deploys to Vercel Pro. Node 22.
+Astro 5 + GSAP 3.13 (ScrollTrigger/SplitText) + Lenis. Static output, deploys to Vercel Pro. Node 24 (`.nvmrc` + `engines`).
 
 - **Start here:** [docs/HANDOFF.md](docs/HANDOFF.md) — current state, conventions, per-page layout notes.
 - Plan + decision log: [docs/PLAN.md](docs/PLAN.md). Copy deck: [docs/COPY.md](docs/COPY.md). Asset audit: [docs/ASSETS.md](docs/ASSETS.md).

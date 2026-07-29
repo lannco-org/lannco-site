@@ -34,11 +34,11 @@ Status: client has **screenshots only** (no Figma, no exports). Every hero-grade
 ## Generation plan
 
 - Tool: Midjourney (or Firefly) with a locked style prompt suffix for consistency across the object series; upscale to 2×.
-- Deliver to `/assets/` as source PNG; I convert to AVIF/WebP responsive sets before Webflow upload (Webflow also compresses on upload).
+- Deliver to `assets/source/` as source PNG (`assets/mockups/` holds the client design boards — keep them separate). Astro's build handles the AVIF/WebP responsive sets; nothing compresses them for us, so the pipeline is ours to write. *(Superseded reference: this line used to say "before Webflow upload" — platform is custom code on Vercel, see PLAN.md.)*
 - Priority order: #1 (hero) → #6–9 (capability cards) → #2, #4 → #10 → #11.
 
 ## Typography
 
-- Mockup display serif resembles **Canela/Saol** (paid). Free fallbacks: **Cormorant** or **Instrument Serif** (Google Fonts, available natively in Webflow). Decision needed: license budget vs free.
+- Mockup display serif resembles **Canela/Saol** (paid). Free fallbacks: **Cormorant** or **Instrument Serif**, both on fontsource so they self-host. Decision needed: license budget vs free.
 - Labels/nav: letterspaced small-caps sans — **Inter** or **Archivo** (free) works.
 - Kanji rendered as SVG artwork (asset #12), not live text — avoids shipping a CJK font.
