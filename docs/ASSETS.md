@@ -8,7 +8,7 @@ Status: client has **screenshots only** (no Figma, no exports). Every hero-grade
 
 | # | Asset | Used on | Notes |
 |---|-------|---------|-------|
-| 1 | Mountain in mist with red silk ribbon wrapping the peak | Home hero | The signature image. Vertical drama, white sky for text overlay left |
+| 1 | Mountain in mist with red silk ribbon wrapping the peak | Home hero | ◐ **Delivered** 2026-07-29 (GPT, from the prompt below) → `src/assets/hero-mountain.png`, 1254×1254. Composition and art direction are right. **Needs a ≥2400px version before launch** — see the resolution note below. Superseded the SVG stand-in `HeroArt.astro` (recoverable at commit `ee6905a`). |
 | 2 | Bonsai/red-maple tree on rock in still water | About | Reflection, heavy negative space |
 | 3 | Stepping stones through misty water | Our Process | Horizontal, leads the eye left→right |
 | 4 | Dark cave/stone interior opening onto red maple | Contact / Private Circle | Doorway metaphor, mostly black |
@@ -52,6 +52,26 @@ Per-tool:
 - **Midjourney:** append `--ar 1:1 --style raw --s 150`. Omit `--v` so it uses your default version.
 - **Firefly:** Content type *Art*, aspect *Square*, and put this in Exclude: `text, watermark, signature, border, frame, people, buildings, birds, boats, saturated colours, orange, pink, blue sky, photorealistic, HDR`.
 - **GPT image:** paste the prompt as-is and ask for the largest square size available. It tends to add a signature or seal — if it does, say "remove all marks and signatures" rather than regenerating.
+
+### Where delivered art lives, and why
+
+Generated masters go in **`src/assets/`**, not `assets/source/` as this doc used to say — Astro's `astro:assets` only builds responsive AVIF/WebP sets for images under `src/`. `assets/mockups/` stays what it was: client design boards only. Import with `<Picture>` and **set `fallbackFormat="jpeg"`** — the masters are PNGs and Astro will otherwise emit a multi-MB PNG fallback (the hero's was 2.3MB; as JPEG it is 167KB, and the AVIF actually served is 41KB).
+
+### Resolution: measure it, don't eyeball it
+
+The hero's `sizes` is `58vw`, so on a 1440 viewport it lays out at ~743 CSS px. At DPR 2 that needs **1486 device px** and the master supplies 1254 → **0.84×, mildly soft**; on a 2560-wide display it is worse. Mobile is fine (350 CSS px × DPR 3 = 1050 needed, covered). So a **≥2400px master** clears every case with headroom.
+
+Careful with `naturalWidth` when checking this: with `w` descriptors in a srcset it returns the *density-corrected* intrinsic width, not the file's pixels. It reported 835 for a 1254px file and made the shortfall look twice as bad as it was. Read the chosen filename out of `img.currentSrc` instead.
+
+### For animated parity with the reference site
+
+The reference hero is a live WebGL mist. Against a flat raster we currently do: the `mask-up` wipe on load, scroll parallax, and `data-anim="drift"` (an 18s / 3% scale breath, so the frame is never frozen). To go further the image has to come apart into layers that can move at different rates. In order of value:
+
+1. **≥2400px master** — the only actual blocker.
+2. **The same composition with the red ribbon removed** (a clean plate). Then the ribbon becomes its own layer over the mountain and can drift on its own, which is the most legible motion in the frame. Ask for an *edit* of this exact image, not a regeneration, or the mountain will not match.
+3. **A mist/fog-only pass on transparency** — enables a genuinely crawling fog and gets closest to the reference.
+
+The ribbon can also be isolated from the existing image by red-hue masking without any new generation, but that leaves a hole where it sat, which is why the clean plate in (2) is worth asking for.
 
 ### Locked style suffix (the object series, #6–#10)
 

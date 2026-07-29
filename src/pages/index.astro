@@ -3,8 +3,9 @@ import Base from '../layouts/Base.astro';
 import Kanji from '../components/Kanji.astro';
 import Seal from '../components/Seal.astro';
 import Arrow from '../components/Arrow.astro';
-import HeroArt from '../components/HeroArt.astro';
 import WorldMap from '../components/WorldMap.astro';
+import { Picture } from 'astro:assets';
+import heroMountain from '../assets/hero-mountain.png';
 import { stats, locations } from '../data/site';
 
 const capabilities = [
@@ -57,8 +58,25 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
           </a>
         </div>
         <div class="hero-visual">
+          {/* ASSETS.md #1, delivered. The wipe lives on the wrapper and the
+              drift/parallax on the image itself, so the two never fight over
+              the same element's transform. Source is 1254px — see ASSETS.md,
+              it still wants an upscale before launch. */}
           <div class="hero-media" data-anim="mask-up">
-            <HeroArt parallax="0.12" />
+            <Picture
+              src={heroMountain}
+              formats={['avif', 'webp']}
+              {/* Fallback must be jpeg: the source is a PNG, and Astro would
+                  otherwise ship a 2.3MB PNG to anything without avif/webp. */}
+              fallbackFormat="jpeg"
+              widths={[640, 900, 1254]}
+              sizes="(max-width: 56rem) 100vw, 58vw"
+              alt="Ink-wash mountain rising through mist, a red silk ribbon sweeping across its base"
+              class="hero-photo"
+              data-anim="drift"
+              data-parallax="0.1"
+              loading="eager"
+            />
           </div>
           <span class="hero-kanji" data-parallax="0.05" aria-hidden="true"><Kanji /></span>
           <Seal class="hero-seal" />

@@ -248,6 +248,21 @@ export function initMotion(): void {
       });
     }
 
+    // --- Ambient drift ------------------------------------------------------
+    // The reference site's hero is a live WebGL mist. This is the cheap analogue
+    // for a still image: a very slow scale breath so the frame is never frozen.
+    // Deliberately long and small — at 18s and 3% it reads as air, not as a
+    // zoom, and it costs one composited transform.
+    document.querySelectorAll<HTMLElement>('[data-anim="drift"]').forEach((el) => {
+      gsap.to(el, {
+        scale: 1.03,
+        duration: 18,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+      });
+    });
+
     // --- Scroll-linked parallax ---------------------------------------------
     document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((el) => {
       const speed = parseFloat(el.dataset.parallax ?? '0.15');

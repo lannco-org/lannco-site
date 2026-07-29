@@ -2,18 +2,19 @@
 
 Context for continuing the build in a fresh session. Plan/phases/decisions: [PLAN.md](PLAN.md). Copy: [COPY.md](COPY.md). Assets: [ASSETS.md](ASSETS.md). This file adds only what those don't carry.
 
-**First moves in a new session:** read this file, then `assets/mockups/*.png` (they beat the written notes), then `npm run dev`. Next work item is **Phase 3** — see "Next work" below. Two decisions are waiting on Ryan and are worth asking about up front: the **capability 04 name** and whether the Vercel account is on **Pro**.
+**First moves in a new session:** read this file, then `assets/mockups/*.png` (they beat the written notes), then `npm run dev`. Next work item is **finishing Phase 4 on the interior pages** — see "Next work" below. Three things are waiting on Ryan: a **≥2400px hero master** (ASSETS.md #1), the **capability 04 name**, and whether the Vercel account is on **Pro**.
 
-## Current state (verified working, end of session 2 — 2026-07-29)
+## Current state (verified working, end of session 3 — 2026-07-29)
 
-**Phases 1 and 2 are complete.** 14 routes build and all serve 200. Node 24.
+**Phases 1–3 are complete and Phase 4 is done on the homepage.** 20 routes build and all serve 200. Node 24.
 
 - Every page layout is built: home (hero + capabilities + condensed global presence), about, capabilities overview, 4 capability detail pages, sectors, global-presence, our-process, journal, contact, private-circle, 404.
 - Global nav: hamburger at every width → full-screen panel; announcement bar with dismiss; footer nav index.
 - Vector assets done as Astro components: `Kanji`, `Seal`, `WorldMap`, `ProcessIcon`, `Arrow` (ASSETS.md #12, #13-square, #15, #16, #17) — all placed and in use.
-- **Everything visual is on placeholders** — no real imagery exists (client supplied only screenshots). `Placeholder.astro` holds each slot and names its ASSETS.md entry; `document.querySelectorAll('[data-asset]')` lists the outstanding images. Generation list + priority: ASSETS.md. **Exception:** the hero is now drawn art (`HeroArt.astro` — SVG ink-wash mountain, mist, red silk ribbon) rather than a grey gradient. It still carries `data-asset` because it is still standing in for ASSETS.md #1.
+- **Almost everything visual is still on placeholders** — the client supplied only screenshots. `Placeholder.astro` holds each slot and names its ASSETS.md entry; `document.querySelectorAll('[data-asset]')` lists what is outstanding. Generation list + priority: ASSETS.md.
+- **The hero image is real as of session 3** — `src/assets/hero-mountain.png`, generated from the ASSETS.md prompt, served through `<Picture>` as AVIF/WebP. It replaced the SVG stand-in (`HeroArt.astro`, recoverable at commit `ee6905a`). Two things worth knowing before touching it: the `cover` crop is calculated against where the ink actually starts and stops in the source (9.4% comes off top and bottom; the summit begins at 17.4% and the lowest mist ends at 84.5%, so both survive), and the edges are feathered with an intersecting two-gradient mask because the generated ground (`#efe8de`–`#f4eee4`) does not match `--paper` (`#f5f2ec`) and read as a visible rectangle without it. **Still wants a ≥2400px master** — ASSETS.md has the arithmetic.
 - **Git + deploy pipeline is live:** private repo `R4HC/lannco-site` → Vercel project `lannco-site`, pushes to `main` auto-deploy. Production green at `https://lannco-site.vercel.app`, gated behind Vercel Deployment Protection (SSO) so it is not public. Build config in `vercel.json`. **Repo-local `user.email` is set to the GitHub noreply address on purpose — don't remove it, or Vercel blocks builds.** Details in the PLAN.md decision log. Still never commit/push without Ryan's ask.
-- **Not built yet:** all of Phase 4's new motion (count-ups, map arc draw / dot pulses, process line draw, preloader, page transitions). `WorldMap` already carries `data-anim="arc-draw"` and `"dot-pulse"` hooks with `pathLength="1"` on the arcs, but `motion.ts` has no handlers for them, so those attributes are inert today.
+- **Not built yet:** the interior pages still reveal purely on scroll — the `data-intro` load-in choreography is homepage-only. Also outstanding: process line draw, journal image parallax, page transitions. The `WorldMap` arc-draw/dot-pulse hooks are live now, not inert.
 
 ### Mobile (audited session 3, 2026-07-29)
 
@@ -42,7 +43,7 @@ Playwright driving **system Chrome** — `chromium.launch({ channel: 'chrome' })
 - **Never size a display-type container in `ch`.** `ch` resolves against the *element's own* font — on `.hero-copy` (body font, 0.98rem) `max-width: 26ch` computed to 257px while the H1 rendered at 96px needing 430px, and SplitText's `overflow: clip` line masks sheared every word ("Connecting" → "Conne"). Fixed 2026-07-29 by switching to `rem`. The failure mode is nasty because the animation is working correctly — it's the mask that clips, so it reads as a broken animation. Use `rem` for anything a display heading lives inside.
 - **Hero H1 line breaks are explicit `<br>`**, not natural wrapping: every board shows four lines at every width, so line count must not drift with column width. SplitText respects the breaks.
 - Hero type scale is calibrated to Board A (~55px at a 1280 viewport) → `--text-hero: clamp(2.75rem, 4.3vw, 4.5rem)`. The original 7.5vw/6rem was ~75% oversized.
-- Placeholder imagery goes through `Placeholder.astro` with an `asset` prop naming its ASSETS.md entry — always pass it, it is how Phase 5 finds the slots. (Two older patterns predate it and still exist: the hero's `.hero-img` gradient and the home capability cards' `data-texture`.)
+- Placeholder imagery goes through `Placeholder.astro` with an `asset` prop naming its ASSETS.md entry — always pass it, it is how Phase 5 finds the slots. (One older pattern predates it and still exists: the home capability cards' `data-texture` gradients. The hero no longer uses a placeholder at all — it is a real image.)
 - Section rhythm: `.section` (+ `.section-alt` for the darker paper band), `.section-head` two-column header via `SectionHead.astro` (display heading + red `.rule` left, intro + `.cta` right) — top-aligned, do not set `align-items: end`, it drops the heading when the right column runs tall.
 - `.lead` grid = copy left / visual right; used by About, capability detail, Global Presence, Contact and Private Circle. Reach for it before inventing a new two-column shape.
 - Page copy/data lives in `src/data/capabilities.ts` and `src/data/site.ts`, single-sourced so e.g. the capability sub-nav cannot drift from the cards. Copy strings are verbatim from COPY.md.
