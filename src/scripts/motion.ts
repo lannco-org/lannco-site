@@ -260,6 +260,92 @@ export function initMotion(): void {
         .catch(() => mistCanvas.remove());
     }
 
+    // --- Scroll cinema ------------------------------------------------------
+    // The hero is a sticky, full-screen art frame with a deliberately generous
+    // scroll runway. Rather than autoplaying a decorative loop, scroll becomes
+    // the camera: the peak advances, the atmosphere deepens and the typographic
+    // layer recedes. `data-hero-progress` gives the generated-film controller a normalized frame
+    // position without changing the page choreography.
+    const hero = document.querySelector<HTMLElement>('[data-hero-cinema]');
+    const heroStage = hero?.querySelector<HTMLElement>('.hero-stage');
+    const heroPhoto = hero?.querySelector<HTMLElement>('.hero-photo');
+    const heroCopy = hero?.querySelector<HTMLElement>('.hero-copy');
+    const heroVisual = hero?.querySelector<HTMLElement>('.hero-visual');
+    const heroRegions = hero?.querySelector<HTMLElement>('.hero-regions');
+    const heroFilm = hero?.querySelector<HTMLVideoElement>('[data-hero-film]');
+
+    if (hero && heroStage && heroPhoto) {
+      let filmDuration = 0;
+      let lastFilmTime = -1;
+      const seekFilm = (progress: number) => {
+        if (!heroFilm || !filmDuration) return;
+        // Avoid a seek on every Lenis tick while retaining the sensation that
+        // each scroll increment owns a precise frame of the film.
+        const nextTime = Math.min(filmDuration - 0.04, Math.max(0, progress * (filmDuration - 0.04)));
+        if (Math.abs(nextTime - lastFilmTime) < 0.018) return;
+        heroFilm.currentTime = nextTime;
+        lastFilmTime = nextTime;
+      };
+
+      if (heroFilm) {
+        const setFilmDuration = () => {
+          filmDuration = Number.isFinite(heroFilm.duration) ? heroFilm.duration : 0;
+        };
+        const revealFilm = () => {
+          setFilmDuration();
+          if (!filmDuration) return;
+          heroFilm.classList.add('is-ready');
+          seekFilm(Number(hero.dataset.heroProgress ?? '0'));
+        };
+        heroFilm.addEventListener('loadedmetadata', setFilmDuration, { once: true });
+        heroFilm.addEventListener('loadeddata', revealFilm, { once: true });
+        if (heroFilm.readyState >= HTMLMediaElement.HAVE_METADATA) setFilmDuration();
+        if (heroFilm.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) revealFilm();
+      }
+
+      const cinema = gsap.timeline({
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.85,
+          onUpdate: (self) => {
+            hero.dataset.heroProgress = self.progress.toFixed(3);
+            seekFilm(self.progress);
+          },
+        },
+      });
+
+      cinema
+        .to(heroStage, { '--hero-progress': 1, ease: 'none', duration: 1 }, 0)
+        .to(heroPhoto, {
+          scale: 1.14,
+          yPercent: -5,
+          filter: 'contrast(1.07) saturate(1.08)',
+          ease: 'none',
+          duration: 1,
+        }, 0)
+        .to(heroCopy, {
+          yPercent: -16,
+          scale: 0.97,
+          opacity: 0.42,
+          ease: 'none',
+          duration: 1,
+        }, 0)
+        .to(heroVisual, {
+          yPercent: -10,
+          scale: 1.07,
+          ease: 'none',
+          duration: 1,
+        }, 0)
+        .to(heroRegions, {
+          xPercent: -7,
+          yPercent: 18,
+          ease: 'none',
+          duration: 1,
+        }, 0);
+    }
+
     // --- Ambient drift ------------------------------------------------------
     // The reference site's hero is a live WebGL mist. This is the cheap analogue
     // for a still image: a very slow scale breath so the frame is never frozen.

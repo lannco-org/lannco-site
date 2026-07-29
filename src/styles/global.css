@@ -291,15 +291,26 @@ html.nav-open { overflow: hidden; }
    `svh` not `vh`: on mobile Safari `100vh` is the *expanded* viewport, so the
    scroll cue and region strip would sit under the browser chrome on load. */
 .hero {
+  --hero-progress: 0;
   position: relative;
+  /* The actual screen is the sticky .hero-stage. The extra scroll distance is
+     intentional: it turns one art-directed frame into a scroll-controlled
+     camera move before the visitor reaches the next chapter. */
   overflow: clip;
   /* One viewport minus the announcement bar and header stacked above it — see
      `--chrome-h` in nav.ts. The 6.5rem fallback is the desktop measurement, so
      this is right before JS runs and exact after. */
+  min-height: calc((100svh - var(--chrome-h, 6.5rem)) * 1.7);
+}
+
+.hero-stage {
+  position: sticky;
+  top: 0;
   min-height: calc(100svh - var(--chrome-h, 6.5rem));
   display: grid;
   align-content: center;
   padding-block: clamp(1.25rem, 3vh, 2.5rem);
+  overflow: clip;
 }
 
 .hero-grid {
@@ -355,12 +366,28 @@ html.motion-ok .hero-mist { display: block; }
    under the fog canvas (1) and the copy (2). */
 .hero-media {
   position: absolute;
-  /* Bottom-anchored and short of full height so the art starts lower down the
-     page — the summit then clears the header instead of sitting tight under it. */
-  inset: auto 0 0 0;
-  height: 92%;
+  /* Full height. A previous version bottom-anchored this at 92% to push the art
+     lower, which left the top 8% of the hero empty — and with the mask's top
+     feather on top of that it read as a gap under the header. The art does not
+     need to be pushed down to keep the summit: sizing it by height already
+     guarantees nothing is cropped. */
+  inset: 0;
   z-index: 0;
   overflow: hidden;
+  will-change: clip-path, transform;
+}
+.hero-atmosphere {
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  opacity: calc(0.12 + var(--hero-progress) * 0.28);
+  background:
+    radial-gradient(ellipse at 63% 66%, rgba(130, 21, 28, 0.31) 0%, rgba(130, 21, 28, 0.11) 18%, transparent 50%),
+    linear-gradient(108deg, rgba(245, 242, 236, 0.12), transparent 45%);
+  mix-blend-mode: multiply;
+  transform: scale(calc(1 + var(--hero-progress) * 0.08));
+  transform-origin: 61% 67%;
+  will-change: opacity, transform;
 }
 /* Insurance for the headline, not a design element. Both masters are briefed
    with an empty off-white zone where the copy lands, so at the intended ratios
@@ -438,7 +465,27 @@ html.motion-ok .hero-mist { display: block; }
     linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
     linear-gradient(to bottom, transparent 0, #000 4%, #000 88%, transparent 100%);
   -webkit-mask-composite: source-in;
+  transform-origin: 57% 47%;
+  will-change: transform, filter;
 }
+/* This sits over the same framed still and becomes visible only after it has a
+   decoded frame. That avoids a black flash on slower connections while keeping
+   the still as a first-class fallback for no-JS and reduced-motion visitors. */
+.hero-film {
+  position: absolute;
+  inset: auto auto 0 50%;
+  translate: -50% 0;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 420ms var(--ease-out);
+  pointer-events: none;
+  will-change: opacity;
+}
+.hero-film.is-ready { opacity: 1; }
 /* Vector now (asset #12), so width drives the size rather than font-size —
    the old font stack was macOS-only. */
 .hero-kanji {
@@ -506,6 +553,24 @@ html.motion-ok .hero-mist { display: block; }
   opacity: 0.55;
   animation: scroll-cue 2.8s var(--ease-out) infinite;
 }
+.hero-progress {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(1.25rem, 4vh, 2.5rem);
+  display: block;
+  width: 1px;
+  height: 3.5rem;
+  background: color-mix(in srgb, var(--ink) 22%, transparent);
+  z-index: 2;
+}
+.hero-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--seal);
+  transform: scaleY(var(--hero-progress));
+  transform-origin: bottom;
+}
 @keyframes scroll-cue {
   0%, 100% { opacity: 0.28; transform: translateY(0); }
   50% { opacity: 0.7; transform: translateY(0.3rem); }
@@ -516,6 +581,10 @@ html.motion-ok .hero-mist { display: block; }
 html.motion-ok .scroll-cue { animation-delay: 4.2s; }
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue { animation: none; opacity: 0.55; }
+  .hero { min-height: 0; }
+  .hero-stage { position: relative; min-height: calc(100svh - var(--chrome-h, 6.5rem)); }
+  .hero-progress { display: none; }
+  .hero-film { display: none; }
 }
 
 @media (max-width: 56rem) {
@@ -525,7 +594,10 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
      mountain into a 96px strip and still overflowed at 320×700. A taller hero
      with a real image beats a full-screen one with a sliver. */
   .hero {
-    min-height: 0;
+    min-height: calc((100svh - var(--chrome-h, 9rem)) + 13rem);
+  }
+  .hero-stage {
+    min-height: max(calc(100svh - var(--chrome-h, 9rem)), 43rem);
     padding-block: clamp(1.5rem, 5vh, 3rem) clamp(2rem, 5vh, 3rem);
   }
   .hero-grid {
@@ -582,6 +654,15 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%);
     -webkit-mask-composite: source-over;
   }
+  .hero-film {
+    inset: 0;
+    translate: none;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    object-position: center 48%;
+  }
   /* Kept, unlike the earlier attempt that dropped it: the art's top edge now
      lands mid-page near the paragraph, so the copy still wants a paper wash
      behind it where the two meet. */
@@ -595,8 +676,8 @@ html.motion-ok .scroll-cue { animation-delay: 4.2s; }
   }
   .hero-copy .rule { margin: 1.8rem 0 1.4rem; }
   .hero-regions { margin-top: 1.75rem; }
-  /* In one column the cue would land on top of the region strip. */
-  .scroll-cue { position: static; display: block; margin-top: 1.5rem; }
+  .scroll-cue { left: var(--gutter); bottom: 1.25rem; }
+  .hero-progress { right: var(--gutter); bottom: 1.25rem; height: 2.5rem; }
 }
 
 /* ------------------------------- preloader -------------------------------- */

@@ -73,7 +73,7 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
 <Base preloader>
   {/* data-intro: everything in here plays as one choreographed load-in behind
       the preloader instead of firing on scroll. Order follows the DOM. */}
-  <section class="hero" data-intro>
+  <section class="hero" data-intro data-hero-cinema>
     {/* Full-bleed hero art (ASSETS.md #1). It sits outside `.container` on
         purpose — the image spans the whole viewport and the copy overlays its
         empty side, which is how Board C frames it. It used to live inside the
@@ -81,14 +81,15 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
         widths, made it compete with the copy for vertical space (see the
         56rem block in global.css). Behind the copy instead, it can't be
         squeezed. */}
-    <div class="hero-media" data-anim="mask-up">
-      <picture>
+    <div class="hero-stage">
+      <div class="hero-media" data-anim="mask-up">
+        <picture>
         <source media={HERO_MOBILE_Q} type="image/avif" srcset={mAvif.srcSet.attribute} sizes="100vw" />
         <source media={HERO_MOBILE_Q} type="image/webp" srcset={mWebp.srcSet.attribute} sizes="100vw" />
         <source media={HERO_MOBILE_Q} type="image/jpeg" srcset={mJpeg.srcSet.attribute} sizes="100vw" />
         <source type="image/avif" srcset={dAvif.srcSet.attribute} sizes="100vw" />
         <source type="image/webp" srcset={dWebp.srcSet.attribute} sizes="100vw" />
-        <img
+          <img
           src={dJpeg.src}
           srcset={dJpeg.srcSet.attribute}
           sizes="100vw"
@@ -96,16 +97,29 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
           height={3072}
           alt="A jagged snow-flecked mountain peak rising through mist, a current of deep red silk sweeping across its face"
           class="hero-photo"
-          data-anim="drift"
-          data-parallax="0.08"
           loading="eager"
           decoding="async"
           fetchpriority="high"
-        />
-      </picture>
-    </div>
-    <div class="container">
-      <div class="hero-grid">
+          />
+        </picture>
+        {/* The still remains the immediate, no-JS and reduced-motion fallback.
+            Once the film has buffered, motion.ts seeks this video directly from
+            scroll position rather than allowing it to autoplay. */}
+        <video
+          class="hero-film"
+          data-hero-film
+          muted
+          playsinline
+          preload="auto"
+          poster={dJpeg.src}
+          aria-hidden="true"
+        >
+          <source src="/assets/lannco-hero-film.mp4" type="video/mp4" />
+        </video>
+        <span class="hero-atmosphere" aria-hidden="true"></span>
+      </div>
+      <div class="container">
+        <div class="hero-grid">
         <div class="hero-copy">
           {/* Breaks are explicit: every mockup shows four lines, desktop and
               mobile, so line count shouldn't drift with the column width. */}
@@ -132,16 +146,18 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
         <ul class="hero-regions" data-anim-stagger>
           {regions.map((region) => <li>{region}</li>)}
         </ul>
+        </div>
       </div>
-    </div>
-    {/* Full-viewport WebGL2 fog, which is what the reference site runs behind
+      {/* Full-viewport WebGL2 fog, which is what the reference site runs behind
         its hero. Purely additive over the image — if WebGL2 is missing or motion
         is reduced, motion.ts removes it and the still image stands alone. */}
-    <canvas class="hero-mist" data-mist aria-hidden="true"></canvas>
+      <canvas class="hero-mist" data-mist aria-hidden="true"></canvas>
 
     {/* Board C's mobile hero ends on a SCROLL cue; the reference site keeps the
         same label at desktop, bottom-left. */}
-    <span class="scroll-cue label" data-anim="fade" aria-hidden="true">Scroll</span>
+      <span class="scroll-cue label" data-anim="fade" aria-hidden="true">Scroll</span>
+      <span class="hero-progress" aria-hidden="true"><span></span></span>
+    </div>
   </section>
 
   <section class="section section-alt">
