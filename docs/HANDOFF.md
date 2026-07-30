@@ -1,111 +1,65 @@
-# HANDOFF — LANNCO build (written 2026-07-29)
+# LANNCO — Client Handover
 
-Context for continuing the build in a fresh session. Plan/phases/decisions: [PLAN.md](PLAN.md). Copy: [COPY.md](COPY.md). Assets: [ASSETS.md](ASSETS.md). This file adds only what those don't carry.
+## Current state
 
-**First moves in a new session:** read this file, then `assets/mockups/*.png` (they beat the written notes), then `npm run dev`. Next work item is **imagery in (Phase 5)** — Ryan is generating all 22 assets in Higgsfield from the prompts in ASSETS.md. See "Next work" below.
+The site is complete as a polished static marketing site and builds successfully with Node 24. It includes the full page set, responsive navigation, an animated home hero, a video fallback strategy, and all approved imagery.
 
-**The one thing most likely to bite you:** the hero is now full-viewport with a WebGL fog layer, and **it is designed to be replaced.** If Ryan delivers a hero video, `src/scripts/mist.ts` gets deleted rather than kept alongside it — ASSETS.md § Higgsfield says so and the markup slot is ready for a `<video>`.
+The project has no runtime API, CMS, database, or required environment variables. It is intentionally straightforward to maintain: content and assets live in the repository and Vercel deploys updates pushed to `main`.
 
-## Current state (verified working, end of session 3 — 2026-07-29)
+## How to run it
 
-**Phases 1–3 are complete and Phase 4 is done on the homepage.** 20 routes build and all serve 200. Node 24.
+```bash
+npm install
+npm run dev
+```
 
-- Every page layout is built: home (hero + capabilities + condensed global presence), about, capabilities overview, 4 capability detail pages, sectors, global-presence, our-process, journal, contact, private-circle, 404.
-- Global nav: hamburger at every width → full-screen panel; announcement bar with dismiss; footer nav index.
-- Vector assets done as Astro components: `Kanji`, `Seal`, `WorldMap`, `ProcessIcon`, `Arrow` (ASSETS.md #12, #13-square, #15, #16, #17) — all placed and in use.
-- **Almost everything visual is still on placeholders** — the client supplied only screenshots. `Placeholder.astro` holds each slot and names its ASSETS.md entry; `document.querySelectorAll('[data-asset]')` lists what is outstanding. Generation list + priority: ASSETS.md.
-- **The hero is full-viewport as of session 3** — `min-height: calc(100svh - var(--chrome-h))`, matching the reference site's hero, which measures exactly 1.0vh (read off the live page: `SECTION.component--herofulltext`, 900px at a 900px viewport, with a full-viewport WebGL2 canvas and **no image at all** — the mountain appears further down their page). `--chrome-h` is published by nav.ts because the announcement bar and header sit above the hero *in flow*: a plain `100svh` put the hero's bottom 105px (desktop) to 232px (mobile) below the fold and cut off the scroll cue. **Full-viewport stops at 56rem on purpose** — in one column the headline runs four lines and the sub another four, ~620px of a 720px phone screen, so forcing it squeezed the mountain to a 96px strip and still overflowed at 320×700. Mobile gets a natural-height hero with a real image instead.
-- **Hero fog is WebGL2** — `src/scripts/mist.ts`, lazily imported by motion.ts, gated on `html.motion-ok`. It draws *only* additive paper-coloured fog over the image, never the image itself: no texture upload, no CORS, and it degrades to the still image if WebGL2 is missing or motion is reduced. It does not displace the peak — warping the rock reads as a wobbling photo, fog crossing a static peak reads as weather. Two bugs to not reintroduce if you touch it: **it must `gl.clear()` every frame** (without it, frames blend onto each other and the fog saturates to opaque within seconds), and **the context is `premultipliedAlpha: true` so the shader must emit `vec4(colour * a, a)`** — emitting straight colour made light haze render as dark grey cloud, because the compositor applied alpha twice.
-- **The hero image is real as of session 3** — `src/assets/hero-mountain.png`, generated from the ASSETS.md prompt, served through `<Picture>` as AVIF/WebP. It replaced the SVG stand-in (`HeroArt.astro`, recoverable at commit `ee6905a`). Two things worth knowing before touching it: the `cover` crop is calculated against where the ink actually starts and stops in the source (9.4% comes off top and bottom; the summit begins at 17.4% and the lowest mist ends at 84.5%, so both survive), and the edges are feathered with an intersecting two-gradient mask because the generated ground (`#efe8de`–`#f4eee4`) does not match `--paper` (`#f5f2ec`) and read as a visible rectangle without it. **Still wants a ≥2400px master** — ASSETS.md has the arithmetic.
-- **Git + deploy pipeline is live:** private repo `R4HC/lannco-site` → Vercel project `lannco-site`, pushes to `main` auto-deploy. Production green at `https://lannco-site.vercel.app`, gated behind Vercel Deployment Protection (SSO) so it is not public. Build config in `vercel.json`. **Repo-local `user.email` is set to the GitHub noreply address on purpose — don't remove it, or Vercel blocks builds.** Details in the PLAN.md decision log. Still never commit/push without Ryan's ask.
-- **Not built yet:** the interior pages still reveal purely on scroll — the `data-intro` load-in choreography is homepage-only. Also outstanding: process line draw, journal image parallax, page transitions. The `WorldMap` arc-draw/dot-pulse hooks are live now, not inert.
+For a release check, run `npm run build` followed by `npm run preview`. Use Node 24 (`.nvmrc`) for local work so the local environment matches Vercel.
 
-### Mobile (audited session 3, 2026-07-29)
+## Where to make changes
 
-Swept 320 / 360 / 390 / 430px × 12 routes in touch-emulating Chrome, scrolling each page fully. **Clean:** no horizontal scroll, no text sheared by a split mask, nothing left unrevealed after scroll, no console errors, and no display heading crammed into a narrow column. Fixed in that pass:
+| Change | Location |
+|---|---|
+| Page copy | `src/data/site.ts`, `src/data/capabilities.ts`, and `src/content/journal/*.md` |
+| Article order and date formatting | `src/data/journal.ts` |
+| Site pages | `src/pages/` |
+| Shared navigation and footer | `src/components/Nav.astro`, `src/components/Footer.astro` |
+| Styles and responsive layout | `src/styles/global.css` |
+| Motion | `src/scripts/motion.ts`; navigation behavior is in `src/scripts/nav.ts` |
+| Images and image registration | `src/assets/` and `src/data/art.ts` |
+| Hero film | `public/assets/lannco-hero-film.mp4` |
+| Brand marks | `src/components/Kanji.astro`, `src/components/Seal.astro`, `public/favicon.svg` |
 
-- `.section-head` now stacks under 44rem (see defect 3 below).
-- `.cap-card` goes `2 / 1` under 36rem. In one column the `3 / 4` portrait was 467px tall, so the four home cards alone were ~1.9m of scroll; the homepage went 4722px → 3555px. Board C's mobile home shows short wide bands, which this now matches.
-- Touch targets: the hamburger was 30×26px and is the *only* nav below 56rem — now 45×44 via padding with the extra pulled back by negative margin, so the hit area grew and the header layout did not move. Announcement dismiss 24×26 → 34×37. Footer nav links gained `padding-block`.
-- **Still under 32px tall:** the announcement's "Read Now", the brand lockup and the three `.cta` links. All are 93–223px *wide*, and their height is a function of the letterspaced label type the boards specify — changing it is a type-scale decision, not a bug fix. Left for the Phase 6 a11y pass.
+## Content workflow
 
-Menu verified by actual taps: opens, moves focus into the panel, closes on a second tap.
+Journal articles are Markdown files in `src/content/journal/`. Add a new file there, include the frontmatter shape used by the existing articles, and add a matching entry to the `articleAssets` map in `src/data/art.ts` if it needs a thumbnail.
 
-### How this was verified (reproduce it, don't trust it)
+The capability cards and sector tiles are single-sourced in the data files. Do not hard-code a duplicate name or description in a page component.
 
-Playwright driving **system Chrome** — `chromium.launch({ channel: 'chrome' })`, because the cached Playwright chromium build is version-mismatched. Two suites, written in the session scratchpad and **not committed** (worth re-creating under `tests/` if this grows):
+The visible placeholder sentences in unfinished capability pillars and journal articles are deliberate. Replace them with client-approved copy rather than inventing text.
 
-1. 45 assertions on the menu across desktop / mobile / reduced-motion — open and close by click and by Escape, focus enters the panel and returns to the toggle, scroll lock, announcement dismiss.
-2. All 13 routes: status, console errors, horizontal overflow, and **`clientWidth` vs `scrollWidth` on every `[data-anim="split-lines"]` child** — the fastest way to catch text sheared by a SplitText mask.
+## Images and hero
 
-## Conventions (established, keep them)
+All 21 supporting images are optimized JPEG masters in `src/assets/`; Astro automatically produces responsive AVIF/WebP output at build time. `Art.astro` looks up the correct master through `src/data/art.ts` and falls back safely if a new asset has not yet been registered.
 
-- Animation opt-in via data attributes, all handled in `src/scripts/motion.ts`:
-  `data-anim="split-lines"` (per-**word** masked reveal, waits for `document.fonts.ready`) · `data-anim="char-fade"` (copy fills in char by char, scrubbed to scroll) · `data-anim="mask-up"` (image wipes up) · `data-anim="rise"` · `data-anim="fade"` · `data-anim="count"` (counts up to the element's own text) · `data-anim="arc-draw"` · `data-anim="dot-pulse"` · `data-anim-stagger` (container; direct children stagger) · `data-parallax="0.12"` (speed) · `data-intro` (container whose reveals play as one load-in timeline instead of on scroll).
-- Pre-reveal hidden states are CSS rules gated on `html.motion-ok`. **`motion-ok` is set by a blocking inline script in `Base.astro`'s `<head>`**, not by motion.ts — it has to land before first paint or the hidden states flash. That script also arms a 4s failsafe that swaps in `html.motion-failed` (which force-un-hides every `[data-anim]`) if motion.ts never runs, so a broken bundle degrades to a plain page rather than a blank one. Add new hidden states gated on `motion-ok` the same way.
-- **Splitting text to `chars` alone breaks lines *inside* words** ("a deep under standing"): each char becomes its own inline-block, so the line breaker no longer sees words. Always split `'words,chars'` and animate the chars. Same family of bug as the `ch`-width one below — check any new split effect by measuring, not by eye.
-- **Never size a display-type container in `ch`.** `ch` resolves against the *element's own* font — on `.hero-copy` (body font, 0.98rem) `max-width: 26ch` computed to 257px while the H1 rendered at 96px needing 430px, and SplitText's `overflow: clip` line masks sheared every word ("Connecting" → "Conne"). Fixed 2026-07-29 by switching to `rem`. The failure mode is nasty because the animation is working correctly — it's the mask that clips, so it reads as a broken animation. Use `rem` for anything a display heading lives inside.
-- **Hero H1 line breaks are explicit `<br>`**, not natural wrapping: every board shows four lines at every width, so line count must not drift with column width. SplitText respects the breaks.
-- Hero type scale is calibrated to Board A (~55px at a 1280 viewport) → `--text-hero: clamp(2.75rem, 4.3vw, 4.5rem)`. The original 7.5vw/6rem was ~75% oversized.
-- Placeholder imagery goes through `Placeholder.astro` with an `asset` prop naming its ASSETS.md entry — always pass it, it is how Phase 5 finds the slots. (One older pattern predates it and still exists: the home capability cards' `data-texture` gradients. The hero no longer uses a placeholder at all — it is a real image.)
-- Section rhythm: `.section` (+ `.section-alt` for the darker paper band), `.section-head` two-column header via `SectionHead.astro` (display heading + red `.rule` left, intro + `.cta` right) — top-aligned, do not set `align-items: end`, it drops the heading when the right column runs tall.
-- `.lead` grid = copy left / visual right; used by About, capability detail, Global Presence, Contact and Private Circle. Reach for it before inventing a new two-column shape.
-- Page copy/data lives in `src/data/capabilities.ts` and `src/data/site.ts`, single-sourced so e.g. the capability sub-nav cannot drift from the cards. Copy strings are verbatim from COPY.md.
-- Footer phone numbers/email are mockup placeholders — flagged in COPY.md open questions.
-- **Nav/menu is built** (session 2): hamburger at every width → full-screen `.nav-panel`. Lives in `src/scripts/nav.ts`, **deliberately separate from motion.ts** because that module returns early under `prefers-reduced-motion` and the menu is navigation, not decoration. It emits `lannco:menu` so motion.ts can `lenis.stop()/start()`. Header/announce sit at `z-index: 70` above the panel's `60` so the toggle stays clickable as the close button. Announcement bar has a dismiss (sessionStorage). Footer carries a nav row — not in the boards, it's the no-JS fallback.
-  - Gotcha worth keeping: do **not** put `visibility` in the panel's transition. Interpolated visibility means the panel is still `hidden` when `focus()` fires, so focus silently goes nowhere — it passed under reduced-motion and failed everywhere else. Uses `visibility 0s linear 0.5s` plus a `requestAnimationFrame` before focusing.
+The home hero uses separate desktop and mobile still masters plus the MP4 film. Keep all three when changing the hero. The stills are the no-JavaScript and reduced-motion fallback; the film is continuous autoplay rather than scroll-seeked, which avoids visible video glitches.
 
-## Layout notes per page (transcribed from client mockups — images NOT in repo)
+For visual reference, use `assets/mockups/board-c-desktop-mobile-12-panel.png` first. It supersedes Board B where the two differ.
 
-**Two of the three boards are now in the repo** (added session 2, 2026-07-29) — Read them before building; they beat these notes:
-- `assets/mockups/board-b-desktop-9-panel.png`
-- `assets/mockups/board-c-desktop-mobile-12-panel.png`
+## Animation guardrails
 
-Boards, in ascending fidelity/recency:
-- **Board A** — single full-size homepage render (~1280w), highest fidelity for hero spacing, type scale and colour. **NOT in the repo** — only ever a pasted screenshot in chat. Notes below are all that survives of it; ask Ryan for the file.
-- **Board B** — 9 labelled desktop panels (1 Homepage … 9 Contact). *In repo.*
-- **Board C** — 12 labelled panels incl. 3 mobile boards and Private Circle. **Latest iteration; when B and C disagree, C wins** (divergences called out below). *In repo.*
+- Respect `prefers-reduced-motion`; content must remain visible with motion off.
+- Add animation hooks through `data-anim*` attributes and handle them in `src/scripts/motion.ts`.
+- Keep display-heading widths in `rem`, not `ch`, and retain the explicit hero line breaks. This prevents SplitText masks from clipping words.
+- Build and review the affected page after animation or layout changes.
 
-Copy is in COPY.md — not repeated here. These notes cover structure only.
+## Launch checklist
 
-- **Global chrome:** black announcement bar (centred text + red "Read Now →" + `×` dismiss, far right). Nav row: LANNCO wordmark (letterspaced display serif) with the red 嵐 seal block immediately right of it; centred small-caps links; far right a red bullet + "PRIVATE CIRCLE" in red, then a **3-line hamburger that is present at desktop width too** (Board A at 1280) — it is a global element, not a breakpoint fallback. Built.
-- **Home:** hero on paper bg — copy left (H1 on 4 lines, red "People.", short red rule, 3-line grey sans sub, red CTA); visual right is the misty mountain with a red silk ribbon swirling across its base, the huge low-opacity 嵐 watermark bleeding off the right edge and overlapping the peak, and a small red seal stamp low-right. Region index sits at the **bottom of the hero, right-aligned under the image only** (not full page width): 4 labels over one hairline rule, with a short thicker **red segment under the active label** — a progress bar, not an underline. Then the Capabilities band on the alt paper background: display H2 + red rule left, intro mid, "View All Capabilities →" far right, then 4 portrait texture cards (stone / red silk / black ink / white marble) with title + number **set over the image**. Board C's mobile home continues into a condensed **Global Presence section** (map + location bullets + 2 stats) — see the standalone-vs-section note below.
-- **About:** copy left, kanji watermark behind, bonsai-on-rock-in-water image. **Board B** adds a vertical reverse-chron timeline right (red dots, 2024→2004, year + place + line). **Board C drops the timeline** and runs two body paragraphs instead. Build the timeline version — it's more substantial and the copy exists — unless Ryan says otherwise.
-- **Capabilities overview:** section head + intro + "Explore Capabilities →" right. 4 portrait cards, numbered 01–04, with **slightly staggered vertical offsets** (the marble card sits lowest). Card anatomy diverges: **B** sets title/blurb over the image (as on home); **C** puts the image on top with title + blurb + a red `→` below it. Use C's for this page and keep the over-image treatment on home — that reads as intentional and matches Board A.
-- **Capability detail (template):** the 01–04 sub-nav **replaces the main nav links** in the header row (active item red + underlined). H1 + red rule + sub + "Contact Us →" left; large studio object on ivory right. Below, 3 numbered pillars in a row.
-- **Global Presence / "A Global Network Built on Trust":** heading + red rule + sub + "View Our Network →" left, plus (Board C) a **red-bulleted location list** under the copy. Dotted-halftone world map right, red dots + small caps labels, thin red connection arcs between hubs (C shows the arcs clearly). Stat row across the bottom, 4 columns **separated by thin vertical rules**.
-- **Sectors:** section head; ivory-backdrop studio-object tiles. **B lays out one row of 8; C uses 2 rows of 4** — build C's 2×4. Red tagline bottom right, "Impactful." in red.
-- **Our Process:** heading + sub; 5 steps in a row, each a red circled line icon over number + title + blurb, connected by a hairline that should draw across on scroll. Misty stepping-stones / mountain + bonsai imagery below. Step 05 is "Build" in B, "Long-Term Relationships" in C (same blurb).
-- **Journal:** heading + sub + "View All Articles →" left. **B:** 3 equal cards. **C:** one large **featured** card (image + title + date) plus a row of **4** smaller cards below. Build C's. Cards carry a small-caps category label (Insights / Perspectives / Outlook), title, date.
-- **Contact:** heading + sub + CTA left; large dark image right (B: cave arch with red seal; C: red maple in a vase on dark stone). Board C adds a **4-column footer contact block** — Singapore / Dubai / Email / Location.
-- **Private Circle:** "Access by Invitation" + sub + "Request Access →" left; dark doorway interior with red maple branches right; tagline bottom left.
-- **Mobile (Board C, 3 boards):** single column, hamburger, hero copy above the image, a **"SCROLL" indicator at the bottom of the hero**, card grids stacked full-width (the Private Introductions card stays red), region/location lists vertical, stats in a 2-up row. Journal mobile has a distinct **"All Articles" list view** — rows of title + date + right-hand thumbnail — so the index needs a list mode, not just cards.
+- Replace temporary phone numbers, email, addresses, capability pillars and journal body copy listed in [COPY.md](COPY.md).
+- Confirm journal categories that were inferred for the final two articles.
+- Review at 390px and 1440px after the intro animation has settled.
+- Confirm Vercel's project settings, client domain and DNS before public launch.
+- Run `npm run build` before publishing.
 
-## Next work, in order
+## Source material retained
 
-1. ✅ **Phase 2 — full page layouts** done 2026-07-29. Structure worth knowing: page copy/data lives in `src/data/capabilities.ts` and `src/data/site.ts` (single source, so the capability sub-nav cannot drift from the cards); shared shapes are `SectionHead.astro`, `Placeholder.astro` and the `.lead` grid CSS (copy left / visual right — About, capability detail, Global Presence, Contact, Private Circle all use it). Capability detail is one dynamic route, `capabilities/[slug].astro`.
-2. ✅ **Phase 3 — content** done 2026-07-29 (session 3). Journal is a content collection: `src/content.config.ts` (zod schema) + `src/content/journal/*.md` (file name = slug), all reads through `src/data/journal.ts` so ordering, slugs and the `"June 2024"` date format cannot drift between views. 20 routes now. `/journal/` (featured + 4 cards, all linking), `/journal/all/` (Board C's list view), `/journal/<slug>/` (article template with prev/next). The announcement bar's headline and link are derived from the featured entry. Article bodies are still outstanding, so entries set `bodyPending` and the template prints "This article is being finalised." — the same treatment as the capability pillars.
-3. ◐ **Phase 4 — animations: the homepage is done**, interior pages are not. Done: preloader (seal + wordmark, holds Lenis), full-viewport hero, WebGL2 fog, orchestrated hero load-in via `data-intro`, per-word masked heading reveals, scroll-scrubbed char fade, `mask-up` image wipe, `drift` ambient scale breath, stat count-ups, map arc draws + dot pulses, scroll cue. **Left:** journal image parallax (the `.journal-media` wrapper is already in place for it), process line draw, page transitions (Astro view transitions), and extending the `data-intro` choreography to interior pages — today they still reveal purely on scroll.
-4. **Phase 5 — assets in. This is the active phase.** Ryan is generating all 22 images in Higgsfield. **ASSETS.md is the brief**: it carries a copy-paste prompt for every one, three locked style suffixes, the per-asset aspect ratio *derived from the built layout* (several assets are used at 2–3 different ratios, so the master has to survive every crop), and the Higgsfield model/settings guidance. Read it before touching imagery. The hero may arrive as **video**, in which case it replaces the WebGL fog rather than layering with it.
-5. **Phases 6–8:** QA → Vercel launch → handover. Per PLAN.md.
-
-## Known defects found reading across the docs (2026-07-29, session 2)
-
-1. ~~**The kanji is live CJK text**~~ — **fixed session 2.** All three usages (hero watermark, nav seal, favicon) now render vector outlines from `Kanji.astro`; no CJK font is shipped or depended on. See ASSETS.md #12 for how the outline was sourced.
-2. **Capability 04 is named inconsistently.** COPY.md has "Opportunities" for the home/overview cards but "Alternative Assets" in the capability-detail sub-nav, and both appear across the boards. Pick one before building the detail pages, or the sub-nav won't match the card the user clicked. **Still open.**
-3. ~~**`.section-head` never stacks on mobile**~~ — **fixed session 3** (stacks under 44rem). It had been two columns at every width, leaving "Sectors We Serve" 87px wide of an available 390px on every page using `SectionHead.astro`.
-4. **Two journal categories were inferred, not supplied.** COPY.md lists categories for only the first three articles; "Luxury Golf Estates" (Insights) and "Tokenization of Real Assets" (Outlook) were assigned in Phase 2 and now live in the content collection frontmatter. Worth confirming with the client.
-5. **Dev-server gotcha, not a code bug:** editing `package.json` invalidates Vite's dep cache, and a long-running `astro dev` then serves `504 (Outdated Optimize Dep)` for gsap/lenis. The whole client module fails and every interaction looks broken. Restart dev (and `rm -rf node_modules/.vite`) before debugging anything that smells like "the JS stopped running".
-
-## Inputs needed from Ryan (blockers, current)
-
-Updated end of session 3. Four earlier items came back decided — fonts (stay free), Vercel Pro (not yet, will be), capability 04 (defer, stays "Opportunities"), journal content (defer). Those are recorded in the PLAN.md decision log and are **no longer open questions**; what remains:
-
-1. **A ≥2400px hero master, and a ribbon-removed plate of it.** The two files and the exact prompts are in ASSETS.md § Generation prompts. The master is the only real blocker (the current 1254px file is mildly soft on retina desktops); the plate is what unlocks independent ribbon motion and is optional.
-2. **The remaining imagery, #2–#11** — prompts and the locked style suffix are written and waiting in ASSETS.md.
-3. **Client copy gaps:** capability-detail pillars ×3, journal bodies ×5, real contact details (COPY.md § open questions). All three currently render an honest "being finalised" line rather than invented copy, so the site ships without them — they are quality gaps, not build blockers.
-4. **Upgrade Vercel to Pro before attaching a client domain.** Hobby prohibits commercial use. Nothing else is gated on it.
-5. **Decide whether production stays publicly reachable.** `https://lannco-site.vercel.app/` currently returns 200 to anyone — Deployment Protection is off, so an unfinished client site with placeholder imagery and "being finalised" copy is readable and indexable by anyone with the URL. Either re-enable Vercel Authentication (Project → Settings → Deployment Protection) or decide it is a deliberate client preview; if the latter, it wants a `robots.txt` disallow.
-6. **Board A** (the full-size homepage render) into `assets/mockups/` — it never landed; the 12-panel board got pasted twice. Highest-fidelity reference for hero spacing, so polish input rather than a blocker.
-7. When launch nears: client domain + DNS. GitHub repo and Vercel project already exist.
-8. Optional: install Node 24 locally. `engines`/`.nvmrc` say 24 and Vercel builds on 24, but this machine is on 22.17.0 with no nvm/fnm, so local and CI differ.
+The copy deck, delivered-asset inventory, and reference boards are all retained in this repository. Historical implementation notes are in `PLAN.md`; use this document as the current source of truth for future work.

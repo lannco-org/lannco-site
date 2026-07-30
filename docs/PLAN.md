@@ -1,4 +1,6 @@
-# LANNCO — Execution Plan (custom code on Vercel)
+# LANNCO — Execution Plan (historical)
+
+> This is an implementation record retained for design and technical context. The site is now handed over; use [HANDOFF.md](HANDOFF.md) for current maintenance instructions and [ASSETS.md](ASSETS.md) for the delivered library.
 
 Copy: see [COPY.md](COPY.md). Assets: see [ASSETS.md](ASSETS.md). Decisions log at bottom.
 

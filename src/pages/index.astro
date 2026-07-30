@@ -72,7 +72,7 @@ const capabilities = [
     asset: '#9 white marble geometric block',
     blurb: 'Curated access to private markets, real estate, and luxury alternative assets.',
   },
-];
+] as const;
 const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
 ---
 <Base preloader>
@@ -108,8 +108,8 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
           />
         </picture>
         {/* The still remains the immediate, no-JS and reduced-motion fallback.
-            Once the film has buffered, motion.ts seeks this video directly from
-            scroll position rather than allowing it to autoplay. */}
+            Once the film has buffered it plays continuously; scroll adds only
+            a restrained composited camera drift, avoiding visible seek jumps. */}
         <video
           class="hero-film"
           data-hero-film

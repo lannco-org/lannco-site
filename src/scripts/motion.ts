@@ -302,19 +302,22 @@ export function initMotion(): void {
           yPercent: 1.2,
           ease: 'none',
           duration: 1,
-        }, 0)
-        .to(heroCopy, {
+        }, 0);
+
+      if (heroCopy) cinema.to(heroCopy, {
           yPercent: -8,
           opacity: 0.72,
           ease: 'none',
           duration: 1,
-        }, 0)
-        .to(heroVisual, {
+        }, 0);
+
+      if (heroVisual) cinema.to(heroVisual, {
           yPercent: -5,
           ease: 'none',
           duration: 1,
-        }, 0)
-        .to(heroRegions, {
+        }, 0);
+
+      if (heroRegions) cinema.to(heroRegions, {
           yPercent: 8,
           ease: 'none',
           duration: 1,

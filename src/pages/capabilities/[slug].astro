@@ -12,7 +12,7 @@ export function getStaticPaths() {
 }
 
 const { capability } = Astro.props;
-const { num, title, sub, texture, asset, pillars, pillarsPending } = capability;
+const { title, sub, texture, asset, pillars, pillarsPending } = capability;
 ---
 <Base title={`${title} — LANNCO`} description={sub}>
   {/* Sub-nav replaces the primary nav links in the header row on the boards.
