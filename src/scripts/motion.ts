@@ -275,12 +275,79 @@ export function initMotion(): void {
 
     if (hero && heroStage && heroMedia && heroPhoto) {
       if (heroFilm) {
-        const revealFilm = () => {
-          heroFilm.classList.add('is-ready');
-          heroFilm.play().catch(() => undefined);
+        const connection = (navigator as Navigator & {
+          connection?: { saveData?: boolean };
+        }).connection;
+        const canPlayFilm = !connection?.saveData;
+        let heroInView = true;
+
+        const syncFilmPlayback = () => {
+          const shouldPlay = canPlayFilm && heroInView && !document.hidden;
+          if (shouldPlay) heroFilm.play().catch(() => undefined);
+          else heroFilm.pause();
         };
-        heroFilm.addEventListener('loadeddata', revealFilm, { once: true });
-        if (heroFilm.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) revealFilm();
+
+        const revealFilm = () => {
+          if (!canPlayFilm) return;
+          heroFilm.classList.add('is-ready');
+          syncFilmPlayback();
+        };
+
+        if (canPlayFilm) {
+          heroFilm.addEventListener('loadeddata', revealFilm, { once: true });
+          if (heroFilm.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) revealFilm();
+
+          const filmObserver = new IntersectionObserver(
+            ([entry]) => {
+              heroInView = entry.isIntersecting;
+              syncFilmPlayback();
+            },
+            { threshold: 0.08 },
+          );
+          filmObserver.observe(hero);
+          document.addEventListener('visibilitychange', syncFilmPlayback);
+        } else {
+          // The responsive still is already decoded underneath the film and is
+          // the intentional lightweight experience for data-saving visitors.
+          heroFilm.remove();
+        }
+      }
+
+      // Pointer parallax gives the mountain, silk and 岚 mark separate depth.
+      // It is deliberately disabled for touch/coarse pointers and never exceeds
+      // a few pixels, so the art direction and protected summit crop stay fixed.
+      if (window.matchMedia('(pointer: fine)').matches) {
+        const cinemaLayers = [heroPhoto, heroFilm].filter(
+          (layer): layer is HTMLElement => layer instanceof HTMLElement,
+        );
+        const setArtX = cinemaLayers.map((layer) =>
+          gsap.quickTo(layer, 'x', { duration: 1.1, ease: 'power3.out' }),
+        );
+        const setArtY = cinemaLayers.map((layer) =>
+          gsap.quickTo(layer, 'y', { duration: 1.1, ease: 'power3.out' }),
+        );
+        const kanji = heroVisual?.querySelector<HTMLElement>('.hero-kanji');
+        const setKanjiX = kanji
+          ? gsap.quickTo(kanji, 'x', { duration: 1.25, ease: 'power3.out' })
+          : undefined;
+        const setKanjiY = kanji
+          ? gsap.quickTo(kanji, 'y', { duration: 1.25, ease: 'power3.out' })
+          : undefined;
+
+        const settleParallax = (x = 0, y = 0) => {
+          setArtX.forEach((set) => set(x * -7));
+          setArtY.forEach((set) => set(y * -5));
+          setKanjiX?.(x * 12);
+          setKanjiY?.(y * 8);
+        };
+
+        hero.addEventListener('pointermove', (event) => {
+          const bounds = hero.getBoundingClientRect();
+          const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+          const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+          settleParallax(x, y);
+        });
+        hero.addEventListener('pointerleave', () => settleParallax());
       }
 
       const cinema = gsap.timeline({
