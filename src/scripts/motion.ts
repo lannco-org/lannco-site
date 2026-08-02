@@ -332,9 +332,6 @@ export function initMotion(): void {
         const cinemaLayers = [heroPhoto, ribbonCanvas, heroFilm].filter(
           (layer): layer is HTMLElement => layer instanceof HTMLElement,
         );
-        const setArtX = cinemaLayers.map((layer) =>
-          gsap.quickTo(layer, 'x', { duration: 1.1, ease: 'power3.out' }),
-        );
         const setArtY = cinemaLayers.map((layer) =>
           gsap.quickTo(layer, 'y', { duration: 1.1, ease: 'power3.out' }),
         );
@@ -345,30 +342,27 @@ export function initMotion(): void {
           gsap.quickTo(layer, 'scaleY', { duration: 1.35, ease: 'power3.out' }),
         );
         const kanji = heroVisual?.querySelector<HTMLElement>('.hero-kanji');
-        const setKanjiX = kanji
-          ? gsap.quickTo(kanji, 'x', { duration: 1.25, ease: 'power3.out' })
-          : undefined;
         const setKanjiY = kanji
           ? gsap.quickTo(kanji, 'y', { duration: 1.25, ease: 'power3.out' })
           : undefined;
 
-        const settleParallax = (x = 0, y = 0) => {
-          setArtX.forEach((set) => set(x * -12));
+        const settleParallax = (y = 0) => {
+          // Horizontal placement is an art-direction anchor, not parallax.
+          // Keeping x untouched prevents the first pointer event from pulling
+          // the complete composition away from its approved right-side position.
           setArtY.forEach((set) => set(y * -10));
           // Pointer-up recedes; pointer-down advances, mirroring the reference
           // hero's restrained camera dolly without disturbing the copy layer.
           const depthScale = 1 + y * 0.06;
           setArtScaleX.forEach((set) => set(depthScale));
           setArtScaleY.forEach((set) => set(depthScale));
-          setKanjiX?.(x * 12);
           setKanjiY?.(y * 8);
         };
 
         hero.addEventListener('pointermove', (event) => {
           const bounds = hero.getBoundingClientRect();
-          const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
           const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-          settleParallax(x, y);
+          settleParallax(y);
         });
         hero.addEventListener('pointerleave', () => settleParallax());
       }
