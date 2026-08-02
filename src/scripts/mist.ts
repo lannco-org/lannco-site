@@ -45,27 +45,36 @@ float fbm(vec2 p) {
 
 void main() {
   vec2 uv = gl_FragCoord.xy / uRes; // y is up
-  vec2 p = vec2(uv.x * 2.2, uv.y * 1.35);
-  float t = uTime * 0.052;
+  // Broad and detail fields travel independently, as on the reference hero:
+  // a slow foreground bank rolls laterally while higher wisps lift and curl.
+  vec2 p = vec2(uv.x * 2.05, uv.y * 1.42);
+  vec2 wind = vec2(uTime * 0.105, sin(uTime * 0.23) * 0.09);
+  float shape = fbm(p * 0.82 + wind * 0.36);
+  vec2 warp = vec2(
+    fbm(p * 1.12 + wind + vec2(0.0, uTime * 0.035)),
+    fbm(p * 1.06 - wind * 0.58 + vec2(4.7, -uTime * 0.05))
+  );
+  vec2 q = p + (warp - 0.5) * 0.92;
 
-  // Two octave sets drifting at different rates and directions: the slower one
-  // warps the faster one, which is what stops it reading as a sliding texture.
-  float f1 = fbm(p * 1.48 + vec2(t, -t * 0.38));
-  float f2 = fbm(p * 3.15 + vec2(-t * 1.85, t * 0.62) + f1 * 0.68);
-  float f3 = fbm(p * 5.2 + vec2(t * 1.15, t * 0.28) - f2 * 0.32);
-  float gust = sin(uv.x * 8.0 - uTime * 0.72 + f1 * 4.0) * 0.055;
-  float fog = smoothstep(0.31, 0.91, f1 * 0.58 + f2 * 0.42 + f3 * 0.18 + gust);
+  float bank = fbm(q * 1.18 + wind * 0.72);
+  float curl = fbm(q * 2.55 + vec2(-uTime * 0.16, uTime * 0.075) + shape * 0.7);
+  float wisp = fbm(q * 4.7 + vec2(uTime * 0.21, -uTime * 0.055) - curl * 0.34);
+  float billows = smoothstep(0.34, 0.76, bank * 0.68 + curl * 0.42 + wisp * 0.16);
 
-  // Confine it to the lower-middle band. Fog at the very top of the frame looks
-  // like haze on the lens; fog at the mountain's base looks like altitude.
-  float band = smoothstep(0.0, 0.30, uv.y) * (1.0 - smoothstep(0.44, 0.96, uv.y));
+  // A second bank crosses in the opposite direction, creating visible parallax
+  // instead of one texture simply sliding across the picture.
+  float counter = fbm(vec2(p.x * 1.38 - uTime * 0.13, p.y * 1.18 + uTime * 0.025));
+  float fog = max(billows, smoothstep(0.43, 0.73, counter) * 0.78);
 
-  // Keep it off the copy. The headline and sub live in the left ~38%, and fog
-  // rolling behind display type reads as dirt on the screen, not as weather.
-  float clear = smoothstep(0.30, 0.62, uv.x);
+  // Dense at the mountain base, with uneven tongues lifting into the mid-frame.
+  float lift = 0.56 + (shape - 0.5) * 0.34 + sin(uv.x * 7.2 - uTime * 0.44) * 0.055;
+  float band = smoothstep(0.0, 0.10, uv.y) * (1.0 - smoothstep(lift, lift + 0.28, uv.y));
 
-  float pulse = 0.88 + 0.12 * sin(uTime * 0.48 + uv.x * 5.0);
-  float a = fog * band * clear * 0.58 * pulse;
+  // The copy remains readable because it is stacked above the canvas; only ease
+  // the cloud density slightly at the far-left paragraph edge.
+  float copyEase = mix(0.62, 1.0, smoothstep(0.16, 0.46, uv.x));
+  float pulse = 0.86 + 0.14 * sin(uTime * 0.72 + uv.x * 5.6 + shape * 3.0);
+  float a = fog * band * copyEase * 0.88 * pulse;
 
   // Premultiplied: the context is premultipliedAlpha (the default) and the blend
   // below is ONE / ONE_MINUS_SRC_ALPHA. Emitting straight colour here instead is
