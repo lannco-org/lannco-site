@@ -1,47 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import Kanji from '../components/Kanji.astro';
-import Seal from '../components/Seal.astro';
 import Arrow from '../components/Arrow.astro';
 import Art from '../components/Art.astro';
 import WorldMap from '../components/WorldMap.astro';
-import { getImage } from 'astro:assets';
-import heroDesktop from '../assets/hero-desktop.png';
-import heroMobile from '../assets/hero-mobile.png';
 import { stats, locations } from '../data/site';
-
-/* The hero is art-directed: two separately generated masters, not one file
-   cropped twice. Board C frames desktop (panel 01) and mobile (panel 10)
-   differently — desktop keeps the whole peak with an empty left third for the
-   headline, mobile crops the peak against the right edge with the empty space
-   moved to the upper left. Cropping one master to both loses either the summit
-   or the silk.
-
-   `<Picture>` can't express that: it emits one image's sources, with no way to
-   swap the *source file* on a media query. So the sets are built here and the
-   <picture> is hand-rolled below — `<source media>` means the browser only ever
-   downloads the set that matches, unlike two <Picture>s toggled with CSS, where
-   both get fetched. */
-const HERO_MOBILE_Q = '(max-width: 56rem)';
-/* Desktop tops out at 5120: a 2560-wide display at DPR2 needs exactly that, and
-   the master is 5504. Mobile tops out at 1600 against 1290 needed for a 430px
-   phone at DPR3. */
-const heroDesktopWidths = [1280, 1920, 2560, 3200, 4096, 5120];
-const heroMobileWidths = [480, 720, 960, 1290, 1600];
-
-const heroSet = (src: ImageMetadata, format: 'avif' | 'webp' | 'jpeg', widths: number[]) =>
-  getImage({ src, format, widths, sizes: '100vw' });
-
-const [dAvif, dWebp, dJpeg, mAvif, mWebp, mJpeg] = await Promise.all([
-  heroSet(heroDesktop, 'avif', heroDesktopWidths),
-  heroSet(heroDesktop, 'webp', heroDesktopWidths),
-  /* jpeg, never png: the masters are PNG and the desktop one is 23MB, so a png
-     fallback would ship that to every browser without avif/webp. */
-  heroSet(heroDesktop, 'jpeg', heroDesktopWidths),
-  heroSet(heroMobile, 'avif', heroMobileWidths),
-  heroSet(heroMobile, 'webp', heroMobileWidths),
-  heroSet(heroMobile, 'jpeg', heroMobileWidths),
-]);
 
 const capabilities = [
   {
@@ -88,41 +50,26 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
         squeezed. */}
     <div class="hero-stage">
       <div class="hero-media" data-anim="mask-up">
-        <picture>
-        <source media={HERO_MOBILE_Q} type="image/avif" srcset={mAvif.srcSet.attribute} sizes="100vw" />
-        <source media={HERO_MOBILE_Q} type="image/webp" srcset={mWebp.srcSet.attribute} sizes="100vw" />
-        <source media={HERO_MOBILE_Q} type="image/jpeg" srcset={mJpeg.srcSet.attribute} sizes="100vw" />
-        <source type="image/avif" srcset={dAvif.srcSet.attribute} sizes="100vw" />
-        <source type="image/webp" srcset={dWebp.srcSet.attribute} sizes="100vw" />
-          <img
-          src={dJpeg.src}
-          srcset={dJpeg.srcSet.attribute}
-          sizes="100vw"
-          width={5504}
-          height={3072}
-          alt="A jagged snow-flecked mountain peak rising through mist, a current of deep red silk sweeping across its face"
-          class="hero-photo"
+        <img
+          src="/assets/lannco-hero-approved.png"
+          width="1536"
+          height="1024"
+          alt="A monochrome mountain rising through mist, crossed by a flowing red ribbon beside the Chinese 岚 symbol"
+          class="hero-photo hero-photo--reference"
           loading="eager"
           decoding="async"
           fetchpriority="high"
-          />
-        </picture>
-        {/* The still remains the immediate, no-JS and reduced-motion fallback.
-            Once the film has buffered it plays continuously; scroll adds only
-            a restrained composited camera drift, avoiding visible seek jumps. */}
-        <video
-          class="hero-film"
-          data-hero-film
-          autoplay
-          loop
-          muted
-          playsinline
-          preload="auto"
-          poster={dJpeg.src}
+        />
+        <svg
+          class="hero-ribbon-motion"
+          viewBox="0 0 1536 1024"
+          preserveAspectRatio="xMidYMid meet"
           aria-hidden="true"
         >
-          <source src="/assets/lannco-hero-film.mp4" type="video/mp4" />
-        </video>
+          <path class="ribbon-current ribbon-current-a" pathLength="1" d="M 205 824 C 340 795 432 735 512 662 C 615 568 730 595 820 575 C 900 558 953 523 1015 472" />
+          <path class="ribbon-current ribbon-current-b" pathLength="1" d="M 224 792 C 365 773 451 705 530 636 C 626 551 738 577 826 558 C 910 540 958 509 1018 461" />
+          <path class="ribbon-current ribbon-current-c" pathLength="1" d="M 259 846 C 390 809 470 748 546 680 C 633 602 735 613 825 589 C 904 568 959 531 1008 493" />
+        </svg>
         <span class="hero-atmosphere" aria-hidden="true"></span>
       </div>
       <div class="container">
@@ -146,10 +93,7 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
             full-bleed layer above. Kept as a grid cell because both are
             positioned against it, and because it reserves the right-hand column
             so the region strip below still lines up under the peak. */}
-        <div class="hero-visual" aria-hidden="true">
-          <span class="hero-kanji" data-parallax="0.05"><Kanji /></span>
-          <Seal class="hero-seal" />
-        </div>
+        <div class="hero-visual" aria-hidden="true"></div>
         <ul class="hero-regions" data-anim-stagger>
           {regions.map((region) => <li>{region}</li>)}
         </ul>

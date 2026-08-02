@@ -1245,3 +1245,68 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 .error-page h1 { font-size: var(--text-hero); max-width: 34rem; }
 .error-page .rule { margin: 2.2rem 0 1.6rem; }
 .error-page .error-sub { color: var(--ink-soft); max-width: 34ch; margin-bottom: 2.4rem; }
+
+
+/* --------------------- supplied animated mountain hero -------------------- */
+/* The approved client artwork is kept intact. Contain preserves the complete
+   mountain, ribbon and 岚 composition; its warm ivory edge dissolves naturally
+   into the page rather than being cropped by the widescreen hero. */
+.hero-photo.hero-photo--reference {
+  object-fit: contain;
+  object-position: center;
+  background: #f7f3ed;
+  transform-origin: 50% 58%;
+}
+
+.hero-mist {
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+}
+
+.hero-ribbon-motion {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 0 0.35rem rgba(160, 42, 32, 0.16));
+}
+
+.ribbon-current {
+  fill: none;
+  stroke: #b7281f;
+  stroke-linecap: round;
+  stroke-dasharray: 0.12 0.88;
+  animation: ribbon-flow 7.5s linear infinite, ribbon-breathe 4.8s ease-in-out infinite alternate;
+  will-change: stroke-dashoffset, opacity;
+}
+.ribbon-current-a { stroke-width: 3.2; opacity: 0.48; }
+.ribbon-current-b { stroke-width: 1.8; opacity: 0.38; animation-duration: 9s, 5.6s; animation-delay: -2.4s, -1.1s; }
+.ribbon-current-c { stroke-width: 1.2; opacity: 0.3; animation-duration: 11s, 6.4s; animation-delay: -5.2s, -2.3s; }
+
+@keyframes ribbon-flow {
+  to { stroke-dashoffset: -1; }
+}
+@keyframes ribbon-breathe {
+  from { opacity: 0.18; }
+  to { opacity: 0.56; }
+}
+
+@media (max-width: 56rem) {
+  .hero-media {
+    height: 62%;
+  }
+  .hero-photo.hero-photo--reference {
+    object-fit: contain;
+    object-position: center bottom;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 96%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 96%, transparent 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ribbon-current { animation: none; opacity: 0.22; }
+}
