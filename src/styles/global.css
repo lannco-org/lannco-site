@@ -1259,9 +1259,9 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 }
 
 .hero-mist {
-  opacity: 0.27;
-  mix-blend-mode: multiply;
-  filter: contrast(1.06);
+  opacity: 0.72;
+  mix-blend-mode: normal;
+  filter: contrast(1.12);
 }
 
 .hero-ribbon-motion {
