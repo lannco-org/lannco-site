@@ -46,13 +46,15 @@ float fbm(vec2 p) {
 void main() {
   vec2 uv = gl_FragCoord.xy / uRes; // y is up
   vec2 p = vec2(uv.x * 2.2, uv.y * 1.35);
-  float t = uTime * 0.011;
+  float t = uTime * 0.052;
 
   // Two octave sets drifting at different rates and directions: the slower one
   // warps the faster one, which is what stops it reading as a sliding texture.
-  float f1 = fbm(p * 1.55 + vec2(t, -t * 0.32));
-  float f2 = fbm(p * 3.05 + vec2(-t * 1.6, t * 0.45) + f1 * 0.55);
-  float fog = smoothstep(0.36, 0.96, f1 * 0.62 + f2 * 0.46);
+  float f1 = fbm(p * 1.48 + vec2(t, -t * 0.38));
+  float f2 = fbm(p * 3.15 + vec2(-t * 1.85, t * 0.62) + f1 * 0.68);
+  float f3 = fbm(p * 5.2 + vec2(t * 1.15, t * 0.28) - f2 * 0.32);
+  float gust = sin(uv.x * 8.0 - uTime * 0.72 + f1 * 4.0) * 0.055;
+  float fog = smoothstep(0.31, 0.91, f1 * 0.58 + f2 * 0.42 + f3 * 0.18 + gust);
 
   // Confine it to the lower-middle band. Fog at the very top of the frame looks
   // like haze on the lens; fog at the mountain's base looks like altitude.
@@ -62,7 +64,8 @@ void main() {
   // rolling behind display type reads as dirt on the screen, not as weather.
   float clear = smoothstep(0.30, 0.62, uv.x);
 
-  float a = fog * band * clear * 0.42;
+  float pulse = 0.88 + 0.12 * sin(uTime * 0.48 + uv.x * 5.0);
+  float a = fog * band * clear * 0.58 * pulse;
 
   // Premultiplied: the context is premultipliedAlpha (the default) and the blend
   // below is ONE / ONE_MINUS_SRC_ALPHA. Emitting straight colour here instead is
