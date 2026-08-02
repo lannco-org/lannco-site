@@ -1,7 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import Kanji from '../components/Kanji.astro';
-import Seal from '../components/Seal.astro';
 import Arrow from '../components/Arrow.astro';
 import Art from '../components/Art.astro';
 import WorldMap from '../components/WorldMap.astro';
@@ -95,10 +93,7 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
             full-bleed layer above. Kept as a grid cell because both are
             positioned against it, and because it reserves the right-hand column
             so the region strip below still lines up under the peak. */}
-        <div class="hero-visual" aria-hidden="true">
-          <span class="hero-kanji" data-parallax="0.05"><Kanji /></span>
-          <Seal class="hero-seal" />
-        </div>
+        <div class="hero-visual" aria-hidden="true"></div>
         <ul class="hero-regions" data-anim-stagger>
           {regions.map((region) => <li>{region}</li>)}
         </ul>
