@@ -1255,6 +1255,7 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   object-fit: contain;
   object-position: center;
   background: #f7f3ed;
+  translate: clamp(2rem, 4.5vw, 4.5rem) 0;
   transform-origin: 50% 58%;
 }
 
@@ -1272,6 +1273,7 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   height: 100%;
   pointer-events: none;
   background: transparent;
+  translate: clamp(2rem, 4.5vw, 4.5rem) 0;
   transform-origin: 50% 58%;
   will-change: contents, transform;
 }
@@ -1280,9 +1282,13 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   .hero-media {
     height: 62%;
   }
+  .hero-ribbon-canvas {
+    translate: 1.25rem 0;
+  }
   .hero-photo.hero-photo--reference {
     object-fit: contain;
     object-position: center bottom;
+    translate: 1.25rem 0;
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 96%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 96%, transparent 100%);
   }
