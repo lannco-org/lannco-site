@@ -338,8 +338,11 @@ export function initMotion(): void {
         const setArtY = cinemaLayers.map((layer) =>
           gsap.quickTo(layer, 'y', { duration: 1.1, ease: 'power3.out' }),
         );
-        const setArtScale = cinemaLayers.map((layer) =>
-          gsap.quickTo(layer, 'scale', { duration: 1.35, ease: 'power3.out' }),
+        const setArtScaleX = cinemaLayers.map((layer) =>
+          gsap.quickTo(layer, 'scaleX', { duration: 1.35, ease: 'power3.out' }),
+        );
+        const setArtScaleY = cinemaLayers.map((layer) =>
+          gsap.quickTo(layer, 'scaleY', { duration: 1.35, ease: 'power3.out' }),
         );
         const kanji = heroVisual?.querySelector<HTMLElement>('.hero-kanji');
         const setKanjiX = kanji
@@ -354,7 +357,9 @@ export function initMotion(): void {
           setArtY.forEach((set) => set(y * -7));
           // Pointer-up recedes; pointer-down advances, mirroring the reference
           // hero's restrained camera dolly without disturbing the copy layer.
-          setArtScale.forEach((set) => set(1 + y * 0.038));
+          const depthScale = 1 + y * 0.038;
+          setArtScaleX.forEach((set) => set(depthScale));
+          setArtScaleY.forEach((set) => set(depthScale));
           setKanjiX?.(x * 12);
           setKanjiY?.(y * 8);
         };
