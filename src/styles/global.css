@@ -1272,7 +1272,8 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   height: 100%;
   pointer-events: none;
   background: transparent;
-  will-change: contents;
+  transform-origin: 50% 58%;
+  will-change: contents, transform;
 }
 
 @media (max-width: 56rem) {
