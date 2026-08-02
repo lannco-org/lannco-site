@@ -353,11 +353,11 @@ export function initMotion(): void {
           : undefined;
 
         const settleParallax = (x = 0, y = 0) => {
-          setArtX.forEach((set) => set(x * -9));
-          setArtY.forEach((set) => set(y * -7));
+          setArtX.forEach((set) => set(x * -12));
+          setArtY.forEach((set) => set(y * -10));
           // Pointer-up recedes; pointer-down advances, mirroring the reference
           // hero's restrained camera dolly without disturbing the copy layer.
-          const depthScale = 1 + y * 0.038;
+          const depthScale = 1 + y * 0.06;
           setArtScaleX.forEach((set) => set(depthScale));
           setArtScaleY.forEach((set) => set(depthScale));
           setKanjiX?.(x * 12);
