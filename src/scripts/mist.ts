@@ -48,7 +48,7 @@ void main() {
   // Broad and detail fields travel independently, as on the reference hero:
   // a slow foreground bank rolls laterally while higher wisps lift and curl.
   vec2 p = vec2(uv.x * 2.05, uv.y * 1.42);
-  vec2 wind = vec2(uTime * 0.105, sin(uTime * 0.23) * 0.09);
+  vec2 wind = vec2(uTime * 0.152, sin(uTime * 0.31) * 0.12);
   float shape = fbm(p * 0.82 + wind * 0.36);
   vec2 warp = vec2(
     fbm(p * 1.12 + wind + vec2(0.0, uTime * 0.035)),
@@ -63,17 +63,17 @@ void main() {
 
   // A second bank crosses in the opposite direction, creating visible parallax
   // instead of one texture simply sliding across the picture.
-  float counter = fbm(vec2(p.x * 1.38 - uTime * 0.13, p.y * 1.18 + uTime * 0.025));
+  float counter = fbm(vec2(p.x * 1.38 - uTime * 0.195, p.y * 1.18 + uTime * 0.038));
   float fog = max(billows, smoothstep(0.43, 0.73, counter) * 0.78);
 
   // Dense at the mountain base, with uneven tongues lifting into the mid-frame.
-  float lift = 0.56 + (shape - 0.5) * 0.34 + sin(uv.x * 7.2 - uTime * 0.44) * 0.055;
+  float lift = 0.56 + (shape - 0.5) * 0.34 + sin(uv.x * 7.2 - uTime * 0.68) * 0.055;
   float band = smoothstep(0.0, 0.10, uv.y) * (1.0 - smoothstep(lift, lift + 0.28, uv.y));
 
   // The copy remains readable because it is stacked above the canvas; only ease
   // the cloud density slightly at the far-left paragraph edge.
   float copyEase = mix(0.62, 1.0, smoothstep(0.16, 0.46, uv.x));
-  float pulse = 0.86 + 0.14 * sin(uTime * 0.72 + uv.x * 5.6 + shape * 3.0);
+  float pulse = 0.86 + 0.14 * sin(uTime * 0.96 + uv.x * 5.6 + shape * 3.0);
   float a = fog * band * copyEase * 0.88 * pulse;
 
   // Premultiplied: the context is premultipliedAlpha (the default) and the blend
