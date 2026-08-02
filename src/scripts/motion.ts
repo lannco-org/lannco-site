@@ -267,13 +267,25 @@ export function initMotion(): void {
     const hero = document.querySelector<HTMLElement>('[data-hero-cinema]');
     const heroStage = hero?.querySelector<HTMLElement>('.hero-stage');
     const heroMedia = hero?.querySelector<HTMLElement>('.hero-media');
-    const heroPhoto = hero?.querySelector<HTMLElement>('.hero-photo');
+    const heroPhoto = hero?.querySelector<HTMLImageElement>('.hero-photo');
     const heroCopy = hero?.querySelector<HTMLElement>('.hero-copy');
     const heroVisual = hero?.querySelector<HTMLElement>('.hero-visual');
     const heroRegions = hero?.querySelector<HTMLElement>('.hero-regions');
     const heroFilm = hero?.querySelector<HTMLVideoElement>('[data-hero-film]');
+    const ribbonCanvas = hero?.querySelector<HTMLCanvasElement>('[data-ribbon-canvas]');
 
     if (hero && heroStage && heroMedia && heroPhoto) {
+      if (ribbonCanvas) {
+        const startRibbon = () => {
+          import('./ribbon')
+            .then(({ initRibbon }) => {
+              if (!initRibbon(ribbonCanvas, heroPhoto)) ribbonCanvas.remove();
+            })
+            .catch(() => ribbonCanvas.remove());
+        };
+        if (heroPhoto.complete && heroPhoto.naturalWidth) startRibbon();
+        else heroPhoto.addEventListener('load', startRibbon, { once: true });
+      }
       if (heroFilm) {
         const connection = (navigator as Navigator & {
           connection?: { saveData?: boolean };
