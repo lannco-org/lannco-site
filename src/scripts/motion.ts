@@ -36,6 +36,8 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 
 /** Character opacity floor for the scrubbed copy fade — matches the reference. */
 const CHAR_FLOOR = 0.08;
+/** Approved desktop artwork scale; pointer depth moves around this anchor. */
+const HERO_ART_BASE_SCALE = 1.2;
 
 export function initMotion(): void {
   const html = document.documentElement;
@@ -353,7 +355,7 @@ export function initMotion(): void {
           setArtY.forEach((set) => set(y * -10));
           // Pointer-up recedes; pointer-down advances, mirroring the reference
           // hero's restrained camera dolly without disturbing the copy layer.
-          const depthScale = 1 + y * 0.06;
+          const depthScale = HERO_ART_BASE_SCALE * (1 + y * 0.06);
           setArtScaleX.forEach((set) => set(depthScale));
           setArtScaleY.forEach((set) => set(depthScale));
           setKanjiY?.(y * 8);
