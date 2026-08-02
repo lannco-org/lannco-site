@@ -54,6 +54,9 @@ void main() {
   vec4 moved = texture(uImage, clamp(local + displacement, 0.0, 1.0));
   float mask = max(redMask(base.rgb), redMask(moved.rgb));
   mask *= smoothstep(0.20, 0.36, local.y) * (1.0 - smoothstep(0.72, 0.86, local.y));
+  // The lower-right red seal is part of the approved source artwork, but it is
+  // a fixed signature—not silk. Exclude its image-space area from displacement.
+  mask *= 1.0 - smoothstep(0.78, 0.84, local.x);
 
   // The displaced source replaces only ribbon pixels. Everything else stays
   // transparent so the untouched approved image remains perfectly sharp below.
