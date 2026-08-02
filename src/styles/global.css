@@ -1259,7 +1259,7 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 }
 
 .hero-mist {
-  opacity: 0.72;
+  opacity: 0.82;
   mix-blend-mode: normal;
   filter: contrast(1.12);
 }
