@@ -35,14 +35,18 @@ void main() {
   }
 
   vec4 base = texture(uImage, local);
-  float phase = uTime * 1.18;
+  float phase = uTime * 1.42;
   float longWave = sin(local.x * 16.0 - phase) * 0.62
                  + sin(local.x * 29.0 + phase * 0.73) * 0.25
                  + sin((local.x + local.y) * 41.0 - phase * 1.34) * 0.13;
   float breath = 0.78 + 0.22 * sin(uTime * 0.58);
+  // Longitudinal waves travel left-to-right along the ribbon, while the
+  // vertical component makes the silk lift and settle around the mountain.
+  float forwardFlow = sin(local.y * 20.0 + local.x * 6.0 - phase * 1.45) * 0.0048
+                    + sin(local.x * 11.0 - phase * 0.72) * 0.0024;
   vec2 displacement = vec2(
-    sin(local.y * 24.0 + phase * 0.72) * 0.0026,
-    longWave * 0.0068 * breath
+    forwardFlow,
+    longWave * 0.0086 * breath
   );
 
   vec4 moved = texture(uImage, clamp(local + displacement, 0.0, 1.0));
