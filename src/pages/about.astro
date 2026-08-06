@@ -3,13 +3,13 @@ import Base from '../layouts/Base.astro';
 import Arrow from '../components/Arrow.astro';
 
 const aboutTimeline = [
-  { year: '2024', place: 'Founding of LANNCO' },
-  { year: '2019', place: 'South Africa' },
-  { year: '2018', place: 'Middle East' },
-  { year: '2015', place: 'Singapore' },
-  { year: '2012', place: 'Europe' },
-  { year: '2008', place: 'Hong Kong' },
-  { year: '2005', place: 'Beijing' },
+  { year: '2024', place: 'Singapore', note: 'Founding of LANNCO' },
+  { year: '2019', place: 'South Africa', note: 'Commodities Expansion' },
+  { year: '2018', place: 'Middle East', note: 'Cross-border Capital Flows' },
+  { year: '2015', place: 'Singapore', note: 'Institutional Trading & Advisory' },
+  { year: '2012', place: 'Europe', note: 'Strategic Partnerships' },
+  { year: '2008', place: 'Hong Kong', note: 'Market Expansion' },
+  { year: '2005', place: 'China', note: 'Private Capital, Long-term Value Creation' },
 ];
 ---
 <Base
@@ -48,10 +48,11 @@ const aboutTimeline = [
 
       <div class="about-reference-history">
         <ol class="about-timeline" data-anim-stagger aria-label="LANNCO timeline">
-          {aboutTimeline.map(({ year, place }) => (
+          {aboutTimeline.map(({ year, place, note }) => (
             <li>
               <time class="about-timeline-year" datetime={year}>{year}</time>
               <span class="about-timeline-place">{place}</span>
+              <span class="about-timeline-note">{note}</span>
             </li>
           ))}
         </ol>
