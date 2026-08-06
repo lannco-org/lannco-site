@@ -1,57 +1,61 @@
 ---
 import Base from '../layouts/Base.astro';
 import Arrow from '../components/Arrow.astro';
-import Kanji from '../components/Kanji.astro';
-import Art from '../components/Art.astro';
-import { timeline } from '../data/site';
 
-// Board B carries the timeline; Board C drops it for a second body paragraph.
-// Built with both — the timeline is the more substantial treatment and its copy
-// exists (docs/HANDOFF.md).
+const aboutTimeline = [
+  { year: '2024', place: 'Founding of LANNCO' },
+  { year: '2019', place: 'South Africa' },
+  { year: '2018', place: 'Middle East' },
+  { year: '2015', place: 'Singapore' },
+  { year: '2012', place: 'Europe' },
+  { year: '2008', place: 'Hong Kong' },
+  { year: '2005', place: 'Beijing' },
+];
 ---
 <Base
   title="About — LANNCO"
   description="An independent cross-border advisory and strategic introductions platform."
 >
-  <section class="section about">
-    <span class="about-kanji" aria-hidden="true"><Kanji /></span>
-    <div class="container lead">
-      <div class="lead-copy">
-        <h1 class="display" data-anim="split-lines">About LANNCO</h1>
+  <section class="about-reference" aria-labelledby="about-title">
+    <img
+      class="about-reference-art"
+      src="/assets/about-reference-art.svg?v=3"
+      width="1672"
+      height="940"
+      alt=""
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
+    <div class="container about-reference-grid">
+      <div class="about-reference-copy">
+        <h1 id="about-title" class="display" data-anim="split-lines">About LANNCO</h1>
         <hr class="rule" data-anim="fade" />
-        <p data-anim="rise">
-          We are an independent cross-border advisory and strategic introductions platform,
-          connecting capital, markets, and people across Asia, the Middle East, Europe and Africa.
-          We operate with discretion, integrity, and a deep understanding of cultures, markets,
-          and relationships.
-        </p>
-        <p data-anim="rise">
-          Our strength lies in connecting perspectives across borders — creating access where
-          trust and understanding meet.
-        </p>
+        <div class="about-reference-intro">
+          <p data-anim="rise">
+            We are an independent cross-border advisory and strategic introduction platform,
+            connecting capital, markets and people across Asia, the Middle East, Europe and Africa.
+          </p>
+          <p data-anim="rise">
+            We operate with discretion, integrity, and a deep understanding of cultures,
+            markets and relationships.
+          </p>
+        </div>
         <a class="cta" href="/contact/" data-anim="rise">
           Our Story <Arrow class="cta-arrow" />
         </a>
       </div>
-      <div class="lead-visual">
-        <ol class="timeline" data-anim-stagger>
-          {timeline.map(({ year, place, note }) => (
+
+      <div class="about-reference-history">
+        <ol class="about-timeline" data-anim-stagger aria-label="LANNCO timeline">
+          {aboutTimeline.map(({ year, place }) => (
             <li>
-              <span class="timeline-year label">{year}</span>
-              <span class="timeline-place">{place}</span>
-              <span class="timeline-note">{note}</span>
+              <time class="about-timeline-year" datetime={year}>{year}</time>
+              <span class="about-timeline-place">{place}</span>
             </li>
           ))}
         </ol>
       </div>
-    </div>
-    <div class="container about-image">
-      <Art
-        asset="#2 bonsai/red-maple tree on rock in still water"
-        variant="mist"
-        ratio="16 / 7"
-        sizes="100vw"
-      />
     </div>
   </section>
 </Base>
