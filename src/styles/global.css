@@ -1547,7 +1547,7 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   color: var(--white);
   background: var(--panel-base);
   isolation: isolate;
-  transition: transform 0.65s var(--ease-out), box-shadow 0.65s var(--ease-out);
+  transition: box-shadow 0.65s var(--ease-out);
 }
 
 .capability-panel--silk { --panel-base: #240305; }
@@ -1613,7 +1613,6 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 }
 
 .capability-panel:hover {
-  transform: translateY(-0.55rem);
   box-shadow: 0 1.4rem 3.5rem rgba(20, 19, 17, 0.18);
 }
 
