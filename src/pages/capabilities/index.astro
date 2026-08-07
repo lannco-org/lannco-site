@@ -1,43 +1,94 @@
 ---
 import Base from '../../layouts/Base.astro';
-import SectionHead from '../../components/SectionHead.astro';
 import Arrow from '../../components/Arrow.astro';
-import Art from '../../components/Art.astro';
-import { capabilities } from '../../data/capabilities';
 
-// Card anatomy follows Board C — image on top, title/blurb/arrow below — with
-// the staggered vertical offsets from Board B. The home page keeps the
-// text-over-image treatment from Board A, which is intentional.
+const capabilityCards = [
+  {
+    num: '01',
+    title: 'Strategic Advisory',
+    blurb: 'Strategic advice for cross-border expansion, market entry, and capital strategy.',
+    art: '/assets/capability-strategic.svg',
+    tone: 'mountain',
+    href: '/capabilities/strategic-advisory/',
+  },
+  {
+    num: '02',
+    title: 'Private Introductions',
+    blurb: 'Introductions to investors, founders, family offices and strategic partners.',
+    art: '/assets/capability-private.svg',
+    tone: 'silk',
+    href: '/capabilities/private-introductions/',
+  },
+  {
+    num: '03',
+    title: 'Institutional Markets',
+    blurb: 'Access to institutional networks in commodities, energy, and digital assets.',
+    art: '/assets/capability-institutional.svg',
+    tone: 'ink',
+    href: '/capabilities/institutional-markets/',
+  },
+  {
+    num: '04',
+    title: 'Alternative Assets',
+    blurb: 'Curated access to private markets, real estate, and alternative investments.',
+    art: '/assets/capability-alternative.svg',
+    tone: 'marble',
+    href: '/capabilities/opportunities/',
+  },
+  {
+    num: '05',
+    title: 'Lifestyle & Network',
+    blurb: 'Access to exceptional experiences, communities, and global partnerships.',
+    art: '/assets/capability-lifestyle.svg',
+    tone: 'lifestyle',
+    href: '/contact/',
+  },
+];
 ---
 <Base
   title="Capabilities — LANNCO"
-  description="Strategic advisory, private introductions, institutional markets and curated opportunities."
+  description="Strategic advisory, private introductions, institutional markets, alternative assets and global networks."
 >
-  <section class="section">
+  <section class="capabilities-reference">
     <div class="container">
-      <SectionHead
-        heading="Our Capabilities"
-        level="h1"
-        intro="We operate with discretion, integrity, and a deep understanding of cultures, markets, and relationships."
-        introSecondary="Each capability is designed to create meaningful opportunities and lasting impact."
-        ctaLabel="Explore Capabilities"
-        ctaHref="/capabilities/strategic-advisory/"
-      />
-      <div class="cap-list" data-anim-stagger>
-        {capabilities.map(({ slug, num, title, blurb, texture, asset }) => (
-          <a class="cap-item" href={`/capabilities/${slug}/`}>
-            <div class="cap-item-media">
-              <Art
-                asset={asset}
-                variant={texture}
-                ratio="3 / 4"
-                sizes="(max-width: 36rem) 100vw, (max-width: 64rem) 50vw, 25vw"
-              />
+      <header class="capabilities-reference-head">
+        <div>
+          <h1 class="display" data-anim="split-lines">Our Capabilities</h1>
+          <hr class="rule" data-anim="fade" />
+        </div>
+        <div class="capabilities-reference-intro">
+          <p data-anim="rise">
+            We operate with discretion, integrity, and a deep understanding of cultures,
+            markets, and relationships.
+          </p>
+          <p data-anim="rise">
+            Each capability is designed to create meaningful opportunities and lasting impact.
+          </p>
+          <a class="cta" href="#capability-grid" data-anim="rise">
+            Explore Capabilities <Arrow class="cta-arrow" />
+          </a>
+        </div>
+      </header>
+
+      <div id="capability-grid" class="capability-panel-grid" data-anim-stagger>
+        {capabilityCards.map(({ num, title, blurb, art, tone, href }) => (
+          <a class={`capability-panel capability-panel--${tone}`} href={href}>
+            <img
+              class="capability-panel-art"
+              src={art}
+              width="300"
+              height="170"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="capability-panel-shade" aria-hidden="true"></span>
+            <div class="capability-panel-content">
+              <h2 class="display">{title}</h2>
+              <span class="capability-panel-rule" aria-hidden="true"></span>
+              <p>{blurb}</p>
+              <span class="capability-panel-num" aria-hidden="true">{num}</span>
             </div>
-            <span class="cap-item-num label">{num}</span>
-            <h2 class="display">{title}</h2>
-            <p>{blurb}</p>
-            <Arrow class="cap-item-arrow" />
           </a>
         ))}
       </div>
