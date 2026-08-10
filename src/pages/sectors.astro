@@ -1,35 +1,96 @@
 ---
 import Base from '../layouts/Base.astro';
-import SectionHead from '../components/SectionHead.astro';
-import Art from '../components/Art.astro';
-import { sectors } from '../data/site';
+import Kanji from '../components/Kanji.astro';
+import Seal from '../components/Seal.astro';
 
-// Board C's 2x4 grid, not Board B's single row of 8 (docs/HANDOFF.md).
+const sectorCards = [
+  {
+    num: '01',
+    title: 'Natural Resources',
+    blurb: 'Commodities and critical minerals including energy metals, industrial minerals, and rare earths.',
+    art: '/assets/sector-natural.svg',
+    tone: 'natural',
+  },
+  {
+    num: '02',
+    title: 'Digital Infrastructure',
+    blurb: 'Next-generation platforms and systems powering global finance, commerce and connectivity.',
+    art: '/assets/sector-digital.svg',
+    tone: 'digital',
+  },
+  {
+    num: '03',
+    title: 'Private Wealth',
+    blurb: 'Solutions for global families and entrepreneurs across wealth preservation and growth.',
+    art: '/assets/sector-wealth.svg',
+    tone: 'wealth',
+  },
+  {
+    num: '04',
+    title: 'Real Estate & Destinations',
+    blurb: 'High-quality real estate and destination assets in strategic global locations.',
+    art: '/assets/sector-real-estate.svg',
+    tone: 'real-estate',
+  },
+  {
+    num: '05',
+    title: 'Art & Lifestyle',
+    blurb: 'Exceptional art, experiences and lifestyle opportunities that inspire and connect.',
+    art: '/assets/sector-art.svg',
+    tone: 'art',
+  },
+];
 ---
 <Base
   title="Sectors — LANNCO"
-  description="Deep expertise across industries and asset classes."
+  description="Focused expertise across natural resources, digital infrastructure, private wealth, real estate, destinations, art and lifestyle."
 >
-  <section class="section">
+  <section class="sectors-reference">
+    <span class="sectors-reference-kanji" aria-hidden="true"><Kanji /></span>
+    <Seal class="sectors-reference-seal" />
+
     <div class="container">
-      <SectionHead
-        heading="Sectors We Serve"
-        level="h1"
-        intro="Deep expertise across industries and asset classes."
-        ctaLabel="Explore Sectors"
-        ctaHref="/contact/"
-      />
-      <ul class="sector-grid" data-anim-stagger>
-        {sectors.map(({ label, asset }) => (
-          <li class="sector-tile">
-            <Art asset={asset} variant="ivory" ratio="1 / 1" sizes="(max-width: 56rem) 50vw, 25vw" />
-            <span class="sector-label">{label}</span>
-          </li>
+      <header class="sectors-reference-head">
+        <div>
+          <h1 class="display" data-anim="split-lines">Our Sectors</h1>
+          <hr class="rule" data-anim="fade" />
+        </div>
+        <p data-anim="rise">
+          We focus on sectors where global trends create long-term value and where our
+          network and insight give us an edge.
+        </p>
+      </header>
+
+      <div class="sector-panel-grid">
+        {sectorCards.map(({ num, title, blurb, art, tone }) => (
+          <article class={`sector-panel sector-panel--${tone}`}>
+            <img
+              class="sector-panel-art"
+              src={art}
+              width="300"
+              height="200"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="sector-panel-shade" aria-hidden="true"></span>
+            <div class="sector-panel-content">
+              <span class="sector-panel-num" aria-hidden="true">{num}</span>
+              <div class="sector-panel-copy">
+                <h2 class="display">{title}</h2>
+                <span class="sector-panel-rule" aria-hidden="true"></span>
+                <p>{blurb}</p>
+              </div>
+            </div>
+          </article>
         ))}
-      </ul>
-      <p class="sector-tagline display" data-anim="rise">
-        Selected. Discreet. <span class="accent">Impactful.</span>
-      </p>
+      </div>
+
+      <div class="sectors-reference-footer" aria-label="Sector principles">
+        <span>Disciplined. Global. Long-term.</span>
+        <i aria-hidden="true"></i>
+        <span>Access. Insight. Impact.</span>
+      </div>
     </div>
   </section>
 </Base>
