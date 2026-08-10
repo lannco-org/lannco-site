@@ -1,50 +1,79 @@
 ---
 import Base from '../../layouts/Base.astro';
-import SectionHead from '../../components/SectionHead.astro';
-import Art from '../../components/Art.astro';
-import { getIndex, articleHref, formatDate } from '../../data/journal';
+import { getIndex, articleHref } from '../../data/journal';
 
-// Board C: one large featured card plus a row of smaller ones. Cards link to
-// the article routes as of Phase 3; the full list lives at /journal/all/.
 const { featured, rest } = await getIndex();
+const articles = [featured, ...rest].slice(0, 4);
+const journalArtwork = [
+  '/assets/journal-markets-hires.svg',
+  '/assets/journal-geopolitics-hires.svg',
+  '/assets/journal-lifestyle-hires.svg',
+  '/assets/journal-insights-hires.svg',
+];
+
+function formatJournalDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).toUpperCase();
+}
 ---
 <Base
   title="Journal — LANNCO"
-  description="Perspectives on capital, markets, and the future of global opportunity."
+  description="Thoughts on markets, capital, geopolitics, lifestyle and the intersections that shape tomorrow."
 >
-  <section class="section">
+  <section class="journal-reference">
     <div class="container">
-      <SectionHead
-        heading="Insights<br />Beyond Borders"
-        level="h1"
-        intro="Perspectives on capital, markets, and the future of global opportunity."
-        ctaLabel="View All Articles"
-        ctaHref="/journal/all/"
-      />
-
-      <a class="journal-featured" href={articleHref(featured)} data-anim="rise">
-        <div class="journal-media journal-featured-media">
-          <Art asset={featured.data.asset} variant="dark" ratio="16 / 9" sizes="(max-width: 56rem) 100vw, 60vw" />
+      <header class="journal-reference-head">
+        <div class="journal-reference-title">
+          <h1 class="display" data-anim="split-lines">Our Journal</h1>
+          <hr class="rule" data-anim="fade" />
+          <p class="journal-reference-kicker">Insights. Perspectives. Opportunities.</p>
         </div>
-        <div class="journal-featured-body">
-          <span class="journal-cat label">{featured.data.category}</span>
-          <h2 class="display">{featured.data.title}</h2>
-          <span class="journal-date">{formatDate(featured.data.date)}</span>
-        </div>
-      </a>
+        <p class="journal-reference-intro" data-anim="rise">
+          Thoughts on markets, capital, geopolitics, lifestyle and the intersections
+          that shape tomorrow.
+        </p>
+      </header>
 
-      <div class="journal-grid" data-anim-stagger>
-        {rest.map((article) => (
-          <a class="journal-card" href={articleHref(article)}>
-            <div class="journal-media">
-              <Art asset={article.data.asset} variant="dark" ratio="4 / 3" sizes="(max-width: 56rem) 50vw, 25vw" />
-            </div>
-            <span class="journal-cat label">{article.data.category}</span>
-            <h3>{article.data.title}</h3>
-            <span class="journal-date">{formatDate(article.data.date)}</span>
+      <div class="journal-reference-grid" data-anim-stagger>
+        {articles.map((article, index) => (
+          <a class="journal-reference-card" href={articleHref(article)}>
+            <span class="journal-reference-media">
+              <img
+                src={journalArtwork[index]}
+                width="1536"
+                height="1024"
+                alt=""
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </span>
+            <span class="journal-reference-body">
+              <span class="journal-reference-category">{article.data.category}</span>
+              <h2 class="display">{article.data.title}</h2>
+              <span class="journal-reference-meta">
+                <time datetime={article.data.date.toISOString()}>
+                  {formatJournalDate(article.data.date)}
+                </time>
+                <span class="journal-reference-arrow" aria-hidden="true">→</span>
+              </span>
+            </span>
           </a>
         ))}
       </div>
+
+      <footer class="journal-reference-footer">
+        <a class="cta" href="/journal/all/">
+          View All Articles <span class="journal-reference-footer-arrow" aria-hidden="true">→</span>
+        </a>
+        <span class="journal-reference-footer-line" aria-hidden="true"></span>
+        <span class="journal-reference-dots" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
+      </footer>
     </div>
   </section>
 </Base>
