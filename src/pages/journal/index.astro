@@ -4,21 +4,39 @@ import { getIndex, articleHref } from '../../data/journal';
 
 const { featured, rest } = await getIndex();
 const articles = [featured, ...rest].slice(0, 4);
-const journalArtwork = [
-  '/assets/journal-markets-hires.svg',
-  '/assets/journal-geopolitics-hires.svg',
-  '/assets/journal-lifestyle-hires.svg',
-  '/assets/journal-insights-hires.svg',
-];
-
-function formatJournalDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).toUpperCase();
-}
+const journalCards = [
+  {
+    category: 'Markets',
+    title: 'Commodities Cycle: Positioning for the Next Decade',
+    date: 'May 12, 2024',
+    datetime: '2024-05-12',
+    art: '/assets/journal-markets-hires.svg',
+  },
+  {
+    category: 'Geopolitics',
+    title: 'The New Geography of Power and Capital',
+    date: 'April 28, 2024',
+    datetime: '2024-04-28',
+    art: '/assets/journal-geopolitics-hires.svg',
+  },
+  {
+    category: 'Lifestyle',
+    title: 'Intentional Living: Freedom by Design',
+    date: 'April 10, 2024',
+    datetime: '2024-04-10',
+    art: '/assets/journal-lifestyle-hires.svg',
+  },
+  {
+    category: 'Insights',
+    title: 'Beyond Assets: Building Lasting Legacies',
+    date: 'March 25, 2024',
+    datetime: '2024-03-25',
+    art: '/assets/journal-insights-hires.svg',
+  },
+].map((card, index) => ({
+  ...card,
+  href: articleHref(articles[index]),
+}));
 ---
 <Base
   title="Journal — LANNCO"
@@ -39,11 +57,11 @@ function formatJournalDate(date: Date): string {
       </header>
 
       <div class="journal-reference-grid">
-        {articles.map((article, index) => (
-          <a class="journal-reference-card" href={articleHref(article)}>
+        {journalCards.map((card, index) => (
+          <a class="journal-reference-card" href={card.href}>
             <span class="journal-reference-media">
               <img
-                src={journalArtwork[index]}
+                src={card.art}
                 width="1536"
                 height="1024"
                 alt=""
@@ -52,12 +70,10 @@ function formatJournalDate(date: Date): string {
               />
             </span>
             <span class="journal-reference-body">
-              <span class="journal-reference-category">{article.data.category}</span>
-              <h2 class="display">{article.data.title}</h2>
+              <span class="journal-reference-category">{card.category}</span>
+              <h2 class="display">{card.title}</h2>
               <span class="journal-reference-meta">
-                <time datetime={article.data.date.toISOString()}>
-                  {formatJournalDate(article.data.date)}
-                </time>
+                <time datetime={card.datetime}>{card.date}</time>
                 <span class="journal-reference-arrow" aria-hidden="true">→</span>
               </span>
             </span>

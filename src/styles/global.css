@@ -2105,3 +2105,68 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
     grid-row: 2;
   }
 }
+
+
+/* Journal reference palette */
+.journal-reference {
+  --journal-paper: #f2ede7;
+  --journal-card: #f6f1eb;
+  --journal-ink: #171412;
+  --journal-muted: #6b645e;
+  --journal-red: #aa171b;
+  --journal-border: #d6cec5;
+  color: var(--journal-ink);
+  background: var(--journal-paper);
+}
+
+.journal-reference-kicker,
+.journal-reference-intro,
+.journal-reference-card h2 {
+  color: var(--journal-ink);
+}
+
+.journal-reference-card {
+  border-color: var(--journal-border);
+  color: var(--journal-ink);
+  background: var(--journal-card);
+}
+
+.journal-reference-category,
+.journal-reference-arrow,
+.journal-reference-footer-arrow,
+.journal-reference-footer .cta {
+  color: var(--journal-red);
+}
+
+.journal-reference-meta time {
+  color: var(--journal-muted);
+  text-transform: uppercase;
+}
+
+.journal-reference-footer-line {
+  background: color-mix(in srgb, var(--journal-ink) 20%, transparent);
+}
+
+.journal-reference-dots i {
+  border-color: var(--journal-red);
+}
+
+.journal-reference-dots i:first-child {
+  background: var(--journal-red);
+}
+
+.journal-reference-card:nth-child(1) .journal-reference-media img {
+  filter: grayscale(1) contrast(1.07);
+}
+
+.journal-reference-card:nth-child(2) .journal-reference-media img {
+  filter: saturate(0.72) sepia(0.13) contrast(1.02);
+}
+
+.journal-reference-card:nth-child(3) .journal-reference-media img {
+  filter: saturate(0.72) sepia(0.1) contrast(1.015);
+}
+
+.journal-reference-card:nth-child(4) .journal-reference-media img {
+  filter: saturate(0.68) sepia(0.12) contrast(1.02);
+}
