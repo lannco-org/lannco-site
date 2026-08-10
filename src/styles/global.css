@@ -1627,7 +1627,7 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   }
 
   .capability-panel {
-    height: 30rem;
+    height: 28rem;
   }
 }
 
@@ -1724,14 +1724,16 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 .sector-panel-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.8rem, 1.35vw, 1.35rem);
+  gap: clamp(0.8rem, 1.15vw, 1.15rem);
+  width: min(100%, 88rem);
+  margin-inline: auto;
 }
 
 .sector-panel {
   --sector-base: #171615;
   position: relative;
   min-width: 0;
-  height: clamp(29rem, 45vw, 31rem);
+  height: clamp(26rem, 40vw, 28rem);
   overflow: hidden;
   border-radius: 0.25rem;
   color: var(--white);
