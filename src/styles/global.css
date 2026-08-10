@@ -1533,7 +1533,9 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 .capability-panel-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.8rem, 1.35vw, 1.35rem);
+  gap: clamp(0.8rem, 1.15vw, 1.15rem);
+  width: min(100%, 88rem);
+  margin-inline: auto;
 }
 
 .capability-panel {
@@ -1541,7 +1543,7 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   position: relative;
   display: block;
   min-width: 0;
-  height: clamp(27rem, 45vw, 31rem);
+  height: clamp(26rem, 40vw, 28rem);
   overflow: hidden;
   border-radius: 0.3rem;
   color: var(--white);
@@ -1557,10 +1559,10 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 
 .capability-panel-art {
   position: absolute;
-  inset: 0 0 auto;
+  inset: 0;
   z-index: -2;
   width: 100%;
-  height: 58%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   transition: transform 1.1s var(--ease-out), filter 0.8s var(--ease-out);
