@@ -1900,3 +1900,208 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
     height: 29rem;
   }
 }
+
+
+/* ------------------------ approved Journal reference --------------------- */
+.journal-reference {
+  padding: clamp(4rem, 8vh, 7rem) 0 clamp(4.5rem, 9vh, 7rem);
+  background: var(--paper);
+}
+
+.journal-reference-head {
+  display: grid;
+  grid-template-columns: minmax(24rem, 1fr) minmax(22rem, 1fr);
+  gap: clamp(4rem, 10vw, 11rem);
+  align-items: center;
+  margin-bottom: clamp(3rem, 6vh, 4.75rem);
+}
+
+.journal-reference-title h1 {
+  font-size: var(--text-hero);
+}
+
+.journal-reference-title .rule {
+  margin-top: 1.8rem;
+}
+
+.journal-reference-kicker {
+  margin-top: 1.8rem;
+  font-size: clamp(0.72rem, 0.9vw, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.journal-reference-intro {
+  max-width: 35ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  line-height: 1.38;
+  color: var(--ink);
+}
+
+.journal-reference-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.15vw, 1.15rem);
+}
+
+.journal-reference-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ink) 13%, transparent);
+  border-radius: 0.25rem;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 96%, white);
+  transition: transform 0.65s var(--ease-out), box-shadow 0.65s var(--ease-out);
+}
+
+.journal-reference-media {
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #ded9d2;
+}
+
+.journal-reference-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.1s var(--ease-out), filter 0.8s var(--ease-out);
+}
+
+.journal-reference-body {
+  display: flex;
+  min-height: clamp(11.5rem, 15vw, 13rem);
+  flex: 1;
+  flex-direction: column;
+  padding: clamp(1.2rem, 1.65vw, 1.6rem);
+}
+
+.journal-reference-category {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--seal);
+}
+
+.journal-reference-card h2 {
+  margin-top: 0.8rem;
+  font-size: clamp(1.3rem, 1.65vw, 1.7rem);
+  line-height: 1.06;
+  color: var(--ink);
+}
+
+.journal-reference-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.4rem;
+}
+
+.journal-reference-meta time {
+  font-size: 0.7rem;
+  letter-spacing: 0.025em;
+  color: var(--ink-soft);
+}
+
+.journal-reference-arrow,
+.journal-reference-footer-arrow {
+  color: var(--seal);
+  font-size: 1.45rem;
+  line-height: 1;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.journal-reference-card:hover {
+  transform: translateY(-0.2rem);
+  box-shadow: 0 1.4rem 3.5rem rgba(20, 19, 17, 0.12);
+}
+
+.journal-reference-card:hover .journal-reference-media img {
+  transform: scale(1.045);
+  filter: contrast(1.025) saturate(1.035);
+}
+
+.journal-reference-card:hover .journal-reference-arrow,
+.journal-reference-footer .cta:hover .journal-reference-footer-arrow {
+  transform: translateX(0.3rem);
+}
+
+.journal-reference-footer {
+  display: grid;
+  grid-template-columns: auto minmax(4rem, 1fr) auto;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+  margin-top: clamp(2.5rem, 5vh, 4rem);
+}
+
+.journal-reference-footer-line {
+  height: 1px;
+  background: color-mix(in srgb, var(--ink) 20%, transparent);
+}
+
+.journal-reference-dots {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.journal-reference-dots i {
+  width: 0.62rem;
+  height: 0.62rem;
+  border: 1px solid var(--seal);
+  border-radius: 50%;
+}
+
+.journal-reference-dots i:first-child {
+  background: var(--seal);
+}
+
+@media (max-width: 72rem) {
+  .journal-reference-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journal-reference-body {
+    min-height: 12rem;
+  }
+}
+
+@media (max-width: 56rem) {
+  .journal-reference-head {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .journal-reference-intro {
+    max-width: 38rem;
+  }
+}
+
+@media (max-width: 38rem) {
+  .journal-reference {
+    padding-top: 3rem;
+  }
+
+  .journal-reference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-reference-footer {
+    grid-template-columns: 1fr auto;
+    gap: 1.4rem;
+  }
+
+  .journal-reference-footer-line {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
