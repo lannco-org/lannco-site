@@ -1509,7 +1509,8 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   margin-bottom: clamp(3rem, 7vh, 5rem);
 }
 
-.capabilities-reference-head h1 {
+.capabilities-reference-head h1,
+.capabilities-reference-head h2 {
   font-size: var(--text-hero);
 }
 
@@ -1587,7 +1588,8 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
   align-items: flex-start;
 }
 
-.capability-panel h2 {
+.capability-panel h2,
+.capability-panel h3 {
   max-width: 9ch;
   font-size: clamp(1.65rem, 2.15vw, 2.15rem);
   line-height: 0.96;
@@ -2171,4 +2173,14 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 
 .journal-reference-card:nth-child(4) .journal-reference-media img {
   filter: saturate(0.68) sepia(0.12) contrast(1.02);
+}
+
+
+/* Homepage uses the same approved Capabilities system as the detail page. */
+.home-capabilities {
+  border-top: 1px solid var(--line);
+}
+
+.home-capabilities .capability-panel-grid {
+  scroll-margin-top: 7rem;
 }
