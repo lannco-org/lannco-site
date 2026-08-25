@@ -1164,6 +1164,11 @@ html.motion-ok [data-anim='fade'] { opacity: 0; }
    unsplit text never flashes at full opacity first. */
 html.motion-ok [data-anim='split-lines'],
 html.motion-ok [data-anim='char-fade'] { opacity: 0; }
+html.motion-ok [data-anim-sequence='reversible'] [data-anim-sequence-item] {
+  opacity: 0;
+  transform: translateY(1.75rem);
+  filter: blur(4px);
+}
 html.motion-ok [data-anim='mask-up'] {
   clip-path: inset(100% 0% 0% 0%);
   transform: scale(1.06);
