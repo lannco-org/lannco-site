@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Arrow from '../components/Arrow.astro';
-import Art from '../components/Art.astro';
 import WorldMap from '../components/WorldMap.astro';
 import { stats, locations } from '../data/site';
 
@@ -9,32 +8,44 @@ const capabilities = [
   {
     num: '01',
     title: 'Strategic Advisory',
-    texture: 'stone',
-    asset: '#6 rough grey stone monolith on ivory',
-    blurb: 'Providing clarity and strategy for cross-border expansion, market entry, and capital strategy.',
+    blurb: 'Strategic advice for cross-border expansion, market entry, and capital strategy.',
+    art: '/assets/capability-strategic-hires.svg',
+    tone: 'mountain',
+    href: '/capabilities/strategic-advisory/',
   },
   {
     num: '02',
     title: 'Private Introductions',
-    texture: 'silk',
-    asset: '#7 red silk/velvet fabric folds, macro',
-    blurb: 'Creating trusted introductions between investors, founders, family offices and strategic partners.',
+    blurb: 'Introductions to investors, founders, family offices and strategic partners.',
+    art: '/assets/capability-private-hires.svg',
+    tone: 'silk',
+    href: '/capabilities/private-introductions/',
   },
   {
     num: '03',
     title: 'Institutional Markets',
-    texture: 'ink',
-    asset: '#8 black liquid-marble/ink swirl',
     blurb: 'Access to institutional networks in commodities, energy, and digital assets.',
+    art: '/assets/capability-institutional-hires.svg',
+    tone: 'ink',
+    href: '/capabilities/institutional-markets/',
   },
   {
     num: '04',
-    title: 'Opportunities',
-    texture: 'marble',
-    asset: '#9 white marble geometric block',
-    blurb: 'Curated access to private markets, real estate, and luxury alternative assets.',
+    title: 'Alternative Assets',
+    blurb: 'Curated access to private markets, real estate, and alternative investments.',
+    art: '/assets/capability-alternative-hires.svg',
+    tone: 'marble',
+    href: '/capabilities/opportunities/',
   },
-] as const;
+  {
+    num: '05',
+    title: 'Lifestyle & Network',
+    blurb: 'Access to exceptional experiences, communities, and global partnerships.',
+    art: '/assets/capability-lifestyle-hires.svg',
+    tone: 'lifestyle',
+    href: '/contact/',
+  },
+];
 const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
 ---
 <Base preloader>
@@ -102,36 +113,46 @@ const regions = ['Asia', 'Middle East', 'Europe', 'Africa'];
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="home-capabilities capabilities-reference">
     <div class="container">
-      <div class="section-head">
+      <header class="capabilities-reference-head">
         <div>
           <h2 class="display" data-anim="split-lines">Our Capabilities</h2>
           <hr class="rule" data-anim="fade" />
         </div>
-        <div>
-          <p class="section-intro" data-anim="char-fade">
-            We operate with discretion, integrity, and a deep understanding of cultures, markets,
-            and relationships.
+        <div class="capabilities-reference-intro">
+          <p data-anim="rise">
+            We operate with discretion, integrity, and a deep understanding of cultures,
+            markets, and relationships.
           </p>
-          <a class="cta" href="/capabilities/" data-anim="rise" style="margin-top: 1.2rem;">
-            View All Capabilities <Arrow class="cta-arrow" />
+          <p data-anim="rise">
+            Each capability is designed to create meaningful opportunities and lasting impact.
+          </p>
+          <a class="cta" href="/capabilities/" data-anim="rise">
+            Explore Capabilities <Arrow class="cta-arrow" />
           </a>
         </div>
-      </div>
-      <div class="card-grid" data-anim-stagger>
-        {capabilities.map(({ num, title, texture, asset, blurb }) => (
-          <a class="cap-card" href="/capabilities/" data-texture={texture} aria-label={`${title} — ${blurb}`}>
-            <div class="card-media">
-              <Art
-                asset={asset}
-                variant={texture}
-                ratio="3 / 4"
-                sizes="(max-width: 36rem) 100vw, (max-width: 64rem) 50vw, 25vw"
-              />
+      </header>
+
+      <div class="capability-panel-grid">
+        {capabilities.map(({ num, title, blurb, art, tone, href }) => (
+          <a class={`capability-panel capability-panel--${tone}`} href={href}>
+            <img
+              class="capability-panel-art"
+              src={art}
+              width="1122"
+              height="1402"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="capability-panel-shade" aria-hidden="true"></span>
+            <div class="capability-panel-content">
+              <h3 class="display">{title}</h3>
+              <span class="capability-panel-rule" aria-hidden="true"></span>
+              <p>{blurb}</p>
+              <span class="capability-panel-num" aria-hidden="true">{num}</span>
             </div>
-            <h3>{title}</h3>
-            <span class="card-num">{num}</span>
           </a>
         ))}
       </div>
