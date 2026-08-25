@@ -70,7 +70,7 @@ const capabilityCards = [
         </div>
       </header>
 
-      <div id="capability-grid" class="capability-panel-grid">
+      <div id="capability-grid" class="capability-panel-grid" data-anim-sequence="reversible">
         {capabilityCards.map(({ num, title, blurb, art, tone, href }) => (
           <a class={`capability-panel capability-panel--${tone}`} href={href}>
             <img
@@ -86,7 +86,7 @@ const capabilityCards = [
             <div class="capability-panel-content">
               <h2 class="display">{title}</h2>
               <span class="capability-panel-rule" aria-hidden="true"></span>
-              <p data-anim="char-fade">{blurb}</p>
+              <p data-anim-sequence-item>{blurb}</p>
               <span class="capability-panel-num" aria-hidden="true">{num}</span>
             </div>
           </a>
