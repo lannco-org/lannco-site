@@ -149,10 +149,11 @@ button { font: inherit; background: none; border: 0; cursor: pointer; color: inh
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  font-family: var(--font-body);
-  font-weight: 600;
-  letter-spacing: 0.42em;
-  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  font-size: clamp(1.45rem, 2vw, 1.85rem);
+  line-height: 1;
 }
 /* Seal stamp (asset #13) — vector glyph in a CSS border box, sized by
    font-size so it can be dropped anywhere. */
@@ -704,10 +705,11 @@ html.motion-ok .preloader { display: grid; }
 }
 .preloader-mark .preloader-seal { font-size: 1.6rem; }
 .preloader-word {
-  font-family: var(--font-body);
-  font-weight: 600;
-  letter-spacing: 0.42em;
-  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  font-size: clamp(1.85rem, 3vw, 2.5rem);
+  line-height: 1;
 }
 
 /* ------------------------------ capabilities ----------------------------- */
