@@ -18,6 +18,7 @@
  *   data-anim="arc-draw"     — SVG path draws itself (needs pathLength="1")
  *   data-anim="dot-pulse"    — map markers breathe
  *   data-anim-stagger        — container; direct children rise, staggered
+ *   data-anim-sequence="reversible" — explanatory items reveal in scroll order
  *   data-parallax="0.12"     — scroll-linked parallax, value = speed
  *   data-intro               — container whose reveals play as one load-in
  *                              timeline instead of on scroll
@@ -147,6 +148,50 @@ export function initMotion(): void {
     document.querySelectorAll<HTMLElement>('[data-anim="char-fade"]').forEach((el) => {
       if (isIntro(el)) return; // handled by the intro timeline, un-scrubbed
       charFade(el);
+    });
+
+    // --- Reversible explanatory-copy sequences -----------------------------
+    // Desktop panels share one horizontal scroll chapter: each explanation
+    // enters clearly in reading order and rewinds in reverse when scrolling up.
+    // On mobile, each stacked panel is tied to its own viewport position.
+    document.querySelectorAll<HTMLElement>('[data-anim-sequence="reversible"]').forEach((group) => {
+      const items = gsap.utils.toArray<HTMLElement>('[data-anim-sequence-item]', group);
+      if (!items.length) return;
+
+      const media = gsap.matchMedia();
+      media.add('(min-width: 768px)', () => {
+        gsap.to(items, {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 1,
+          ease: 'power2.out',
+          stagger: 0.28,
+          scrollTrigger: {
+            trigger: group,
+            start: 'top 72%',
+            end: 'top 24%',
+            scrub: 0.8,
+          },
+        });
+      });
+
+      media.add('(max-width: 767px)', () => {
+        items.forEach((item) => {
+          gsap.to(item, {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: item,
+              start: 'top 88%',
+              end: 'top 58%',
+              scrub: 0.65,
+            },
+          });
+        });
+      });
     });
 
     // --- Image / box wipes --------------------------------------------------
