@@ -18,9 +18,20 @@ import Art from '../components/Art.astro';
         <h1 class="display" data-anim="split-lines">Relationships Begin<br />with Conversations.</h1>
         <hr class="rule" data-anim="fade" />
         <p data-anim="rise">We work through referrals and selected introductions.</p>
-        <a class="cta" href="mailto:hello@lannco.com" data-anim="rise">
-          Start a Conversation <Arrow class="cta-arrow" />
-        </a>
+        <div class="contact-actions" data-anim="rise">
+          <a class="cta" href="mailto:hello@lannco.com">
+            Start a Conversation <Arrow class="cta-arrow" />
+          </a>
+          <a
+            class="cta"
+            href="https://wa.me/6596576728?text=Hello%20LANNCO%2C%20I%20would%20like%20to%20start%20a%20conversation."
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat with LANNCO on WhatsApp"
+          >
+            Chat on WhatsApp <Arrow class="cta-arrow" />
+          </a>
+        </div>
       </div>
       <div class="lead-visual">
         <Art
