@@ -1211,6 +1211,15 @@ html.motion-failed [data-anim] { opacity: 1 !important; transform: none !importa
 .lead-copy p { color: var(--ink-soft); max-width: 40ch; }
 .lead-copy p + p { margin-top: 1rem; }
 .lead-copy .cta { margin-top: 2.2rem; }
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.1rem 2rem;
+  margin-top: 2.2rem;
+}
+.lead-copy .contact-actions .cta { margin-top: 0; }
 .lead-visual { position: relative; }
 @media (max-width: 56rem) {
   .lead { grid-template-columns: 1fr; }
