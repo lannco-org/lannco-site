@@ -14,10 +14,25 @@ import Art from '../components/Art.astro';
         <hr class="rule" data-anim="fade" />
         <p data-anim="rise">
           Our Private Circle is reserved for clients and partners by invitation only.
+          Contact us directly to request consideration for membership.
         </p>
-        <a class="cta" href="/contact/" data-anim="rise">
-          Request Access <Arrow class="cta-arrow" />
-        </a>
+        <div class="contact-actions" data-anim="rise">
+          <a
+            class="cta"
+            href="mailto:sasha.zhou@lann-co.com?subject=LANNCO%20Private%20Circle%20Access%20Request&amp;body=Hello%20Sasha%2C%20I%20would%20like%20to%20request%20access%20to%20the%20LANNCO%20Private%20Circle."
+          >
+            Request by Email <Arrow class="cta-arrow" />
+          </a>
+          <a
+            class="cta"
+            href="https://wa.me/6596576728?text=Hello%20Sasha%2C%20I%20would%20like%20to%20request%20access%20to%20the%20LANNCO%20Private%20Circle."
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Request LANNCO Private Circle access on WhatsApp"
+          >
+            Request on WhatsApp <Arrow class="cta-arrow" />
+          </a>
+        </div>
       </div>
       <div class="lead-visual">
         <Art
